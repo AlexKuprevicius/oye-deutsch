@@ -88,6 +88,12 @@ button.live{animation:pulse 1.1s ease-in-out infinite}
 .tok.y{background:var(--ok-soft);color:var(--ok)} .tok.n{background:var(--bad-soft);color:var(--bad);text-decoration:underline}
 .status{color:var(--stage-muted);min-height:1.5em;font-size:.95rem}
 .steps{margin:0;padding-left:20px;color:var(--stage-muted);font-size:.92rem}
+textarea{font:inherit;font-size:1.05rem;width:100%;padding:14px 16px;border-radius:16px;border:2px solid transparent;background:rgba(255,255,255,.08);color:var(--stage-ink);resize:vertical;min-height:120px}
+textarea::placeholder{color:var(--stage-muted)}
+textarea:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.star{width:48px;min-width:48px;height:48px;padding:0;font-size:1.6rem;border-radius:14px;background:rgba(255,255,255,.08)!important;color:var(--stage-muted)!important}
+.star.on{color:var(--gold)!important}
+.fb a{color:inherit;font-weight:700}
 input[type=text]{font:inherit;font-size:1.1rem;width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
 .stage input[type=text]{background:rgba(255,255,255,.08);border-color:transparent;color:var(--stage-ink)}
 .stage input::placeholder{color:var(--stage-muted)}
@@ -292,7 +298,10 @@ const T={
   helpN:"Mikrofon aus Versehen blockiert? Oben neben der Adresse auf das Schloss bzw. Einstellungs-Symbol tippen und das Mikrofon erlauben. Kein Ton? Stummschalter aus, Lautstärke hoch.",
   noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Ton konnte nicht abgespielt werden. Stummschaltung aus? Sonst den Link direkt in Safari oder Chrome öffnen.",
   add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
-  hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"]},
+  hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"],
+  fbT:"Feedback",fbCard:"Wie gefällt dir die App?",fbCardSub:"Lob, Fehler, Wünsche: alles hilft, die App besser zu machen.",fbGo:"Feedback geben",
+  fbStars:"Deine Bewertung",fbText:"Was können wir besser machen?",fbTextPh:"z. B. Ein Wort wird immer falsch erkannt, oder: Ich wünsche mir mehr Sätze zum Thema Arbeit …",fbName:"Dein Name (freiwillig)",
+  fbSend:"Absenden",fbSending:"Wird gesendet …",fbThanks:"Danke! Dein Feedback ist angekommen. 💛",fbEmpty:"Schreib bitte kurz etwas oder vergib Sterne.",fbFail:"Senden hat hier nicht geklappt. Öffne das Formular direkt:",fbOpen:"Formular öffnen ↗"},
  es:{tToday:"Hoy",tLevels:"Niveles",tExtras:"Extras",tStats:"Progreso",tSet:"Ajustes",
   hello:"¡Hola!",streak:n=>n===1?"1 día":`${n} días`,
   daily:"Palabra del día",dailyDone:"Hecho hoy ✓",dailyGo:"Practicar",
@@ -323,7 +332,10 @@ const T={
   helpN:"¿Bloqueaste el micrófono sin querer? Toca el candado o el icono de ajustes junto a la dirección y permite el micrófono. ¿No suena? Quita el modo silencio y sube el volumen.",
   noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"No se pudo reproducir. ¿Modo silencio? Si no, abre el enlace directamente en Safari o Chrome.",
   add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
-  hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"]}
+  hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"],
+  fbT:"Opinión",fbCard:"¿Qué te parece la app?",fbCardSub:"Elogios, errores, deseos: todo ayuda a mejorarla.",fbGo:"Dar mi opinión",
+  fbStars:"Tu valoración",fbText:"¿Qué podemos mejorar?",fbTextPh:"p. ej. Una palabra nunca se reconoce bien, o: me gustaría más frases sobre el trabajo …",fbName:"Tu nombre (opcional)",
+  fbSend:"Enviar",fbSending:"Enviando …",fbThanks:"¡Gracias! Tu opinión ha llegado. 💛",fbEmpty:"Escribe algo o pon estrellas, por favor.",fbFail:"Aquí no se pudo enviar. Abre el formulario directamente:",fbOpen:"Abrir formulario ↗"}
 };
 
 /* ================= state ================= */
@@ -472,6 +484,44 @@ async function toggleSelf(){
 }
 function playMine(){if(myUrl){const a=new Audio(myUrl);a.play().catch(()=>{})}}
 
+/* ================= feedback (Google Form) ================= */
+const FORM="https://docs.google.com/forms/d/e/1FAIpQLSezmMWYC9_e23V1UhV9CSsZX3RQP9aodCaiT-NFypqnsXT_PQ";
+const F_NAME="entry.477745371",F_TEXT="entry.1994519768",F_INFO="entry.1759751550";
+let fbStars=0,fbState="",fbFrom="today";
+function device(){const u=navigator.userAgent;return /iPhone|iPad|iPod/.test(u)?"iPhone":/Android/.test(u)?"Android":/Mac/.test(u)?"Mac":/Windows/.test(u)?"Windows":"Andere"}
+function fbInfo(){const done=SETS.filter((s,i)=>isPassed(i)).length;
+  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Mikro: ${micMode} | Von: ${fbFrom}`}
+async function sendFeedback(){
+  const l=L(),text=($("fbTxt").value||"").trim(),name=($("fbNm").value||"").trim();
+  if(!text&&!fbStars){fbState="empty";paintFb();return}
+  fbState="sending";paintFb();
+  const body=new URLSearchParams();body.append(F_NAME,name);body.append(F_TEXT,text||"(nur Sterne)");body.append(F_INFO,fbInfo());
+  try{await fetch(FORM+"/formResponse",{method:"POST",mode:"no-cors",body});fbState="sent";$("fbTxt").value="";$("fbNm").value="";fbStars=0}
+  catch(e){fbState="fail"}
+  paintFb();
+}
+function paintFb(){const l=L(),st=$("fbStarsRow"),msg=$("fbMsg"),btn=$("fbBtn");if(!st)return;
+  st.innerHTML=[1,2,3,4,5].map(n=>`<button class="star ${n<=fbStars?"on":""}" data-act="fbstar" data-n="${n}" aria-label="${n}" aria-pressed="${n<=fbStars}">★</button>`).join("");
+  btn.disabled=fbState==="sending";btn.textContent=fbState==="sending"?l.fbSending:l.fbSend;
+  const pre=FORM+"/viewform?usp=pp_url&"+F_INFO+"="+encodeURIComponent(fbInfo());
+  msg.hidden=!["sent","fail","empty"].includes(fbState);
+  msg.className="fb "+(fbState==="sent"?"ok":fbState==="empty"?"warn":"bad");
+  msg.innerHTML=fbState==="sent"?esc(l.fbThanks):fbState==="empty"?esc(l.fbEmpty):fbState==="fail"?`${esc(l.fbFail)} <a href="${esc(pre)}" target="_blank" rel="noopener">${esc(l.fbOpen)}</a>`:"";
+}
+function fbCardHtml(from){const l=L();return `<section class="card"><h3>💬 ${esc(l.fbCard)}</h3><p class="muted">${esc(l.fbCardSub)}</p><button class="wide" data-act="feedback" data-from="${from}">${esc(l.fbGo)}</button></section>`}
+function vFeedback(){const l=L();
+  return `<div class="row"><button class="ghost" data-act="tab" data-v="${["today","levels","extras","stats","settings"].includes(fbFrom)?fbFrom:"today"}">${esc(l.back)}</button></div>
+  <header><h2>${esc(l.fbCard)}</h2></header><p class="muted">${esc(l.fbCardSub)}</p>
+  <section class="stage">
+   <span class="eyebrow">${esc(l.fbStars)}</span><div class="row" id="fbStarsRow" style="gap:4px"></div>
+   <label class="eyebrow" for="fbTxt">${esc(l.fbText)}</label>
+   <textarea id="fbTxt" rows="5" placeholder="${esc(l.fbTextPh)}"></textarea>
+   <label class="eyebrow" for="fbNm">${esc(l.fbName)}</label>
+   <input type="text" id="fbNm" autocomplete="given-name">
+   <button class="gold big wide" id="fbBtn" data-act="fbsend">${esc(l.fbSend)}</button>
+   <div id="fbMsg" class="fb" hidden></div>
+  </section>`}
+
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
@@ -504,7 +554,8 @@ function vToday(){
   <section class="card">
     <h3>${esc(l.quizCard)}</h3><p class="muted">${esc(l.quizCardSub)}</p>
     <button class="wide" data-act="quiz">👂 ${esc(l.quizGo)}</button>
-  </section>`;
+  </section>
+  ${fbCardHtml("today")}`;
 }
 
 function vLevels(){
@@ -607,7 +658,7 @@ function vResult(){
    <div class="row">${lvlKind&&ok&&nx?`<button class="gold" data-act="open" data-k="level" data-i="${exam.i0+1}">${esc(l.nextLevel)}</button>`:""}
     ${exam.kind!=="review"?`<button ${lvlKind&&!ok?'class="gold"':""} data-act="exam">${esc(l.retryExam)}</button>`:""}
     ${(ok||!lvlKind)&&exam.kind!=="review"?`<button data-act="sharelevel" data-p="${pct}">📤 ${esc(l.share)}</button>`:""}
-    <button data-act="tab" data-v="${home}">${esc(l.toHome)}</button></div></section>
+    <button data-act="tab" data-v="${home}">${esc(l.toHome)}</button><button data-act="feedback" data-from="${home}">💬 ${esc(l.fbT)}</button></div></section>
   <section class="card"><ul class="list">${rows}</ul></section>`;
 }
 
@@ -668,6 +719,7 @@ function vSettings(){
    <h3>${esc(l.iph)}</h3><ol>${l.helpI.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
    <h3>${esc(l.and)}</h3><ol>${l.helpA.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
    <p class="muted" style="font-size:.9rem">${esc(l.helpN)}</p></section>
+  ${fbCardHtml("settings")}
   <section class="card">${confirmReset?`<p><b>${esc(l.resetQ)}</b></p><div class="row"><button class="red" data-act="resetyes">${esc(l.yes)}</button><button data-act="resetno">${esc(l.no)}</button></div>`
    :`<button data-act="reset">${esc(l.reset)}</button>`}${flash?`<div class="fb ok">${esc(flash)}</div>`:""}</section>`;
 }
@@ -676,7 +728,8 @@ const ICONS={today:'<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l
 function tabOf(){if(["today","levels","extras","stats","settings"].includes(view))return view;
   if(view==="set")return cur.kind==="level"?"levels":cur.kind==="daily"||cur.kind==="review"?"today":"extras";
   if(view==="exam"||view==="result")return exam.kind==="level"?"levels":exam.kind==="review"?"today":"extras";
-  if(view==="quiz"||view==="quizres")return quiz.back;return "today"}
+  if(view==="quiz"||view==="quizres")return quiz.back;
+  if(view==="feedback")return ["today","levels","extras","stats","settings"].includes(fbFrom)?fbFrom:"today";return "today"}
 function tabs(){const l=L(),act=tabOf();
   $("tabs").innerHTML=[["today",l.tToday],["levels",l.tLevels],["extras",l.tExtras],["stats",l.tStats],["settings",l.tSet]]
    .map(([k,t])=>`<button data-act="tab" data-v="${k}" aria-current="${act===k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${esc(t)}</button>`).join("")}
@@ -684,13 +737,13 @@ function tabs(){const l=L(),act=tabOf();
 function render(scrollTop){
   if(recActive)stopRec();
   document.documentElement.lang=S.lang;
-  const V={today:vToday,levels:vLevels,extras:vExtras,set:vSet,exam:vExam,result:vResult,quiz:vQuiz,quizres:vQuizResult,stats:vStats,settings:vSettings};
+  const V={today:vToday,levels:vLevels,extras:vExtras,set:vSet,exam:vExam,result:vResult,quiz:vQuiz,quizres:vQuizResult,stats:vStats,settings:vSettings,feedback:vFeedback};
   app.innerHTML=(V[view]||vToday)();
   tabs();flash="";
   const said=$("said");if(said)said.addEventListener("input",onInput);
   const r=$("rate");if(r)r.addEventListener("input",()=>{S.rate=+r.value;$("rateV").textContent=S.rate.toFixed(2)+"×";save()});
   const oi=$("ownIn");if(oi)oi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addOwn()}});
-  selfUI();
+  selfUI();paintFb();
   if(scrollTop)window.scrollTo(0,0);
 }
 
@@ -771,6 +824,9 @@ document.addEventListener("click",e=>{
    case"sharequiz":share(l.shareLevel(l.quiz,Math.round(+b.dataset.n/quiz.items.length*100)));break;
    case"sharestats":share(l.shareStats(streak(),SETS.filter((s,i)=>isPassed(i)).length));break;
    case"lang":S.lang=b.dataset.v;save();render(false);break;
+   case"feedback":fbFrom=b.dataset.from||"today";fbState="";fbStars=0;view="feedback";render(true);break;
+   case"fbstar":fbStars=+b.dataset.n;if(fbState==="empty"||fbState==="sent")fbState="";paintFb();break;
+   case"fbsend":sendFeedback();break;
    case"test":S.test=!S.test;save();render(false);break;
    case"reset":confirmReset=true;render(false);break;
    case"resetno":confirmReset=false;render(false);break;
