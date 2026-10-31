@@ -286,10 +286,10 @@ const T={
   sHard:"Schwierige Wörter",sHardNone:"Noch keine. Weiter so!",sLevels:"Level-Ergebnisse",sSaved:"Der Fortschritt wird nur auf diesem Handy und in diesem Browser gespeichert.",shareProg:"Fortschritt teilen",
   lang:"Sprache der App",rate:"Sprechtempo",testMode:"Testmodus: alle Level freischalten",testSub:"Zum Ausprobieren. Prüfungen bleiben gleich.",on:"An",off:"Aus",
   reset:"Fortschritt zurücksetzen",resetQ:"Wirklich alle Ergebnisse, Zeiten und eigenen Wörter löschen?",yes:"Ja, löschen",no:"Abbrechen",resetDone:"Alles zurückgesetzt.",
-  help:"So funktioniert das Sprechen",helpMic:"Am besten: auf „Sprechen“ tippen und das Mikrofon erlauben. Klappt das nicht, gibt es das Tastatur-Diktat:",iph:"iPhone",and:"Android",
-  helpI:["Einstellungen → Allgemein → Tastatur → Tastaturen → Deutsch hinzufügen.","„Diktierfunktion aktivieren“ einschalten."],
-  helpA:["Gboard → Einstellungen → Sprachen → Deutsch hinzufügen.","Im Feld mit 🌐 auf Deutsch wechseln und das Mikrofon antippen."],
-  helpN:"Kein Ton? Stummschalter aus, Lautstärke hoch, Link direkt in Safari oder Chrome öffnen.",
+  help:"So funktioniert das Sprechen",helpMic:"Auf „Sprechen“ tippen, beim ersten Mal das Mikrofon erlauben und das Wort sagen. Die App prüft automatisch.",iph:"iPhone",and:"Android",
+  helpI:["Link in Safari öffnen.","Die Diktierfunktion muss an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Ohne sie geht die Spracherkennung nicht."],
+  helpA:["Link in Chrome öffnen.","Beim ersten Tippen auf „Sprechen“ das Mikrofon erlauben."],
+  helpN:"Mikrofon aus Versehen blockiert? Oben neben der Adresse auf das Schloss bzw. Einstellungs-Symbol tippen und das Mikrofon erlauben. Kein Ton? Stummschalter aus, Lautstärke hoch.",
   noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Ton konnte nicht abgespielt werden. Stummschaltung aus? Sonst den Link direkt in Safari oder Chrome öffnen.",
   add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
   hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"]},
@@ -317,10 +317,10 @@ const T={
   sHard:"Palabras difíciles",sHardNone:"Ninguna todavía. ¡Sigue así!",sLevels:"Resultados por nivel",sSaved:"El progreso se guarda solo en este móvil y en este navegador.",shareProg:"Compartir progreso",
   lang:"Idioma de la app",rate:"Velocidad de la voz",testMode:"Modo prueba: desbloquear todos los niveles",testSub:"Para probar la app. Los exámenes no cambian.",on:"Sí",off:"No",
   reset:"Borrar progreso",resetQ:"¿Seguro que quieres borrar resultados, tiempos y tus palabras?",yes:"Sí, borrar",no:"Cancelar",resetDone:"Todo borrado.",
-  help:"Cómo funciona hablar",helpMic:"Lo mejor: pulsa «Hablar» y permite el micrófono. Si no funciona, usa el dictado del teclado:",iph:"iPhone",and:"Android",
-  helpI:["Ajustes → General → Teclado → Teclados → añadir Alemán.","Activa «Dictado»."],
-  helpA:["Gboard → Ajustes → Idiomas → añadir Alemán.","En el campo cambia a alemán con 🌐 y toca el micrófono."],
-  helpN:"¿No suena? Quita el modo silencio, sube el volumen y abre el enlace directamente en Safari o Chrome.",
+  help:"Cómo funciona hablar",helpMic:"Pulsa «Hablar», la primera vez permite el micrófono y di la palabra. La app lo comprueba sola.",iph:"iPhone",and:"Android",
+  helpI:["Abre el enlace en Safari.","El dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Sin él no funciona el reconocimiento de voz."],
+  helpA:["Abre el enlace en Chrome.","La primera vez que pulses «Hablar», permite el micrófono."],
+  helpN:"¿Bloqueaste el micrófono sin querer? Toca el candado o el icono de ajustes junto a la dirección y permite el micrófono. ¿No suena? Quita el modo silencio y sube el volumen.",
   noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"No se pudo reproducir. ¿Modo silencio? Si no, abre el enlace directamente en Safari o Chrome.",
   add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
   hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"]}
@@ -534,8 +534,7 @@ function speakBlock(){const l=L();
   if(micMode==="sr")return `<span class="eyebrow">${esc(l.yourTurn)}</span>
    <button class="red big wide" data-act="rec" id="recBtn">${esc(l.recStart)}</button>
    <p class="status" id="recStatus">${esc(l.recHint)}</p>
-   <div id="fb" class="fb" hidden></div>
-   <button class="ghost" data-act="usedict" style="align-self:flex-start">${esc(l.useDict)}</button>`;
+   <div id="fb" class="fb" hidden></div>`;
   return `<span class="eyebrow">${esc(l.yourTurn)}</span>${micNote?`<div class="fb warn">${esc(micNote)}</div>`:""}
    <button class="red big wide" data-act="kb">${esc(l.kbOpen)}</button>
    <ol class="steps">${l.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
