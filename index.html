@@ -1,115 +1,173 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Oye Deutsch – entrena la pronunciación alemana / Deutsch-Aussprache üben"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Oye Deutsch</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Oye Deutsch – entrena la pronunciación alemana / Deutsch-Aussprache üben"><meta name="theme-color" content="#15120E"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Oye Deutsch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-/* Layout: single-column phone app. Views (levels / practice / exam / stats / settings) swap inside one wrapper; fixed bottom tab bar. */
+/* Concept: the colours both flags share (black, red, gold). Gold = action, red = the sound to watch, ink = structure.
+   Layout: phone app, one column, five tabs at the bottom; a dark "stage" card carries the word being practised. */
 :root{
-  --bg:#F4F3F8; --surface:#FFFFFF; --ink:#1A1D2B; --muted:#5D6175; --line:#DCDBE6;
-  --accent:#2F3FC4; --accent-ink:#FFFFFF; --sound:#D9541E; --sound-bg:#FCE7DC;
-  --ok:#1E7A4C; --ok-bg:#DDF2E6; --warn:#9A5B00; --warn-bg:#FBEFD5; --bad:#B42335; --bad-bg:#F9E0E3;
-  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
-  --body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;
+  --bg:#FFFFFF; --surface:#F5F2ED; --line:#E6E0D6; --ink:#15120E; --muted:#6B6359;
+  --gold:#F4B400; --gold-ink:#15120E; --gold-soft:#FFF3CC;
+  --red:#D3231B; --red-soft:#FDE5E2;
+  --stage:#15120E; --stage-ink:#FBF6EC; --stage-muted:#B9AE9E;
+  --ok:#1B7A47; --ok-soft:#DCF2E5; --warn:#94590A; --warn-soft:#FBEFD3; --bad:#B4231C; --bad-soft:#FBE1DE;
+  --display:"Unbounded",ui-rounded,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12131A; --surface:#1C1E29; --ink:#ECEDF5; --muted:#A3A6BA; --line:#2E3142;
-  --accent:#8E9BFF; --accent-ink:#10122A; --sound:#FF8A55; --sound-bg:#3A2218;
-  --ok:#6FD39F; --ok-bg:#163326; --warn:#F2C26B; --warn-bg:#3A2D12; --bad:#FF8C99; --bad-bg:#3D1A20; color-scheme:dark}}
+  --bg:#110F0C; --surface:#1D1A15; --line:#312C24; --ink:#F7F1E6; --muted:#A79D8E;
+  --gold:#FFC531; --gold-ink:#15120E; --gold-soft:#3A2F10;
+  --red:#FF5B4F; --red-soft:#3D1714;
+  --stage:#26211A; --stage-ink:#FBF6EC; --stage-muted:#B9AE9E;
+  --ok:#6FD49C; --ok-soft:#14301F; --warn:#F2C46B; --warn-soft:#382B12; --bad:#FF8B82; --bad-soft:#3D1A17; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#12131A; --surface:#1C1E29; --ink:#ECEDF5; --muted:#A3A6BA; --line:#2E3142;
-  --accent:#8E9BFF; --accent-ink:#10122A; --sound:#FF8A55; --sound-bg:#3A2218;
-  --ok:#6FD39F; --ok-bg:#163326; --warn:#F2C26B; --warn-bg:#3A2D12; --bad:#FF8C99; --bad-bg:#3D1A20; color-scheme:dark}
+  --bg:#110F0C; --surface:#1D1A15; --line:#312C24; --ink:#F7F1E6; --muted:#A79D8E;
+  --gold:#FFC531; --gold-ink:#15120E; --gold-soft:#3A2F10;
+  --red:#FF5B4F; --red-soft:#3D1714;
+  --stage:#26211A; --stage-ink:#FBF6EC; --stage-muted:#B9AE9E;
+  --ok:#6FD49C; --ok-soft:#14301F; --warn:#F2C46B; --warn-soft:#382B12; --bad:#FF8B82; --bad-soft:#3D1A17; color-scheme:dark}
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:20px calc(96px + env(safe-area-inset-bottom,0px))}
-.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-h1{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
-h1 span{color:var(--sound)}
-h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin:0;text-wrap:balance}
-.sub{margin:4px 0 0;color:var(--muted)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px}
-.label{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.word{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,11vw,3.4rem);line-height:1.05;margin:0;overflow-wrap:anywhere;text-wrap:balance}
-.word.sentence{font-size:clamp(1.4rem,6.5vw,2rem)}
-.word mark{background:var(--sound-bg);color:var(--sound);border-radius:8px;padding:0 .08em}
-.ipa{color:var(--muted)}
-.note{background:var(--bg);border-radius:12px;padding:12px 14px;font-size:.95rem}
+  padding-block:14px calc(100px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:700;line-height:1.15}
+h3{font-size:1rem;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+/* brand */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.15rem;letter-spacing:-.02em}
+.logo{width:38px;height:38px;border-radius:12px;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-size:1.25rem;font-weight:800;position:relative}
+.logo::after{content:"";position:absolute;inset:auto 6px 6px auto;width:7px;height:7px;border-radius:50%;background:var(--red)}
+.brand span{color:var(--red)}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border-radius:99px;padding:6px 12px;font-weight:700;font-size:.9rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* surfaces */
+.card{background:var(--surface);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:26px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.stage .eyebrow{color:var(--stage-muted)}
+.stage .ipa{color:var(--stage-muted)}
+.word{font-family:var(--display);font-weight:700;font-size:clamp(2rem,10.5vw,3.2rem);line-height:1.05;margin:0;overflow-wrap:anywhere;text-wrap:balance;letter-spacing:-.02em}
+.word.sentence{font-size:clamp(1.3rem,6vw,1.8rem);line-height:1.2}
+.word mark{background:none;color:var(--gold);text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:4px;text-underline-offset:6px}
+.note{background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:.95rem;color:var(--stage-ink)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button{font:inherit;cursor:pointer;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 16px;min-height:44px}
-button:focus-visible,input:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
-button.speak{background:var(--sound);border-color:var(--sound);color:var(--bg);font-weight:700;font-size:1.15rem;min-height:56px;border-radius:16px;width:100%}
-button.ghost{border-color:transparent;background:none;padding-left:4px;color:var(--accent);font-weight:700}
+.row.between{justify-content:space-between}
+/* buttons */
+button,.btn{font:inherit;cursor:pointer;border-radius:999px;border:0;background:var(--bg);color:var(--ink);padding:11px 18px;min-height:46px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.card button:not(.gold):not(.red):not(.ghost):not(.lvl):not(.opt){background:var(--bg)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+button.gold{background:var(--gold);color:var(--gold-ink)}
+button.red{background:var(--red);color:#fff}
+button.ghost{background:none;color:var(--ink);padding-inline:6px;text-decoration:underline;text-underline-offset:4px;font-weight:700;min-height:40px}
+.stage button{background:rgba(255,255,255,.1);color:var(--stage-ink)}
+.stage button.gold{background:var(--gold);color:var(--gold-ink)}
+.stage button.red{background:var(--red);color:#fff}
+.stage button.ghost{background:none;color:var(--stage-muted)}
+button.wide{width:100%}
+button.big{min-height:60px;font-size:1.1rem;border-radius:20px}
 button:active{transform:scale(.97)}
-button:disabled{opacity:.45;cursor:default;transform:none}
-button.speak.live{background:var(--bad);border-color:var(--bad);animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.75}}
-@media (prefers-reduced-motion:reduce){button.speak.live{animation:none}}
-.status{margin:0;color:var(--muted);min-height:1.5em}
-.steps{margin:0;padding-left:20px;color:var(--muted);font-size:.92rem}
-input[type=text]{font:inherit;font-size:1.15rem;width:100%;padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
-.fb{border-radius:14px;padding:12px 14px}
-.fb.ok{background:var(--ok-bg);color:var(--ok)} .fb.warn{background:var(--warn-bg);color:var(--warn)} .fb.bad{background:var(--bad-bg);color:var(--bad)}
-.tok{display:inline-block;margin:2px 4px 2px 0;padding:0 6px;border-radius:6px}
-.tok.y{background:var(--ok-bg);color:var(--ok)} .tok.n{background:var(--bad-bg);color:var(--bad);text-decoration:underline}
-.nav2{display:flex;justify-content:space-between;gap:10px}
-.native{color:var(--accent);font-size:.95rem;font-weight:700;text-decoration:none}
-.banner{background:var(--bad-bg);color:var(--bad);border-radius:14px;padding:12px 14px;font-size:.95rem}
-.tip{margin:0}
-.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-.list li{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
-.list button.w{flex:1;min-width:0;text-align:left;border:0;border-radius:0;background:none;padding:12px 2px;font-size:1.1rem}
-.list button.w[aria-current="true"]{font-weight:700;color:var(--accent)}
-.list button.w mark{background:none;color:var(--sound);font-weight:700}
-.cnt{font-variant-numeric:tabular-nums;color:var(--ok);font-size:.85rem;white-space:nowrap}
-.play{min-width:44px;width:44px;height:44px;padding:0;display:grid;place-items:center}
+button:disabled{opacity:.4;cursor:default;transform:none}
+button.live{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.7}}
+.play{width:46px;min-width:46px;height:46px;padding:0;border-radius:50%}
 .play svg{width:18px;height:18px;fill:currentColor}
+/* sound wave */
+.wave{display:inline-flex;gap:3px;align-items:center;height:22px}
+.wave i{width:4px;height:6px;border-radius:2px;background:var(--gold);transition:height .2s}
+.wave.on i{animation:wv .9s ease-in-out infinite}
+.wave.on i:nth-child(2){animation-delay:.12s}.wave.on i:nth-child(3){animation-delay:.24s}.wave.on i:nth-child(4){animation-delay:.36s}.wave.on i:nth-child(5){animation-delay:.48s}
+@keyframes wv{0%,100%{height:6px}50%{height:22px}}
+/* feedback */
+.fb{border-radius:16px;padding:12px 14px;font-size:.98rem}
+.fb.ok{background:var(--ok-soft);color:var(--ok)} .fb.warn{background:var(--warn-soft);color:var(--warn)} .fb.bad{background:var(--bad-soft);color:var(--bad)}
+.tok{display:inline-block;margin:2px 4px 2px 0;padding:0 6px;border-radius:6px}
+.tok.y{background:var(--ok-soft);color:var(--ok)} .tok.n{background:var(--bad-soft);color:var(--bad);text-decoration:underline}
+.status{color:var(--stage-muted);min-height:1.5em;font-size:.95rem}
+.steps{margin:0;padding-left:20px;color:var(--stage-muted);font-size:.92rem}
+input[type=text]{font:inherit;font-size:1.1rem;width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.stage input[type=text]{background:rgba(255,255,255,.08);border-color:transparent;color:var(--stage-ink)}
+.stage input::placeholder{color:var(--stage-muted)}
+.banner{background:var(--bad-soft);color:var(--bad);border-radius:16px;padding:12px 14px;font-size:.95rem}
+.native{color:var(--stage-muted);font-size:.9rem;text-decoration:underline;text-underline-offset:3px}
+/* lists */
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .w{flex:1;min-width:0;text-align:left;background:none!important;border-radius:0;padding:12px 2px;font-size:1.05rem;justify-content:flex-start;font-weight:400}
+.list .w[aria-current="true"]{font-weight:700}
+.list .w mark{background:none;color:var(--red);font-weight:700}
+.cnt{font-variant-numeric:tabular-nums;color:var(--ok);font-size:.85rem;white-space:nowrap}
 .pair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
-.pair span{color:var(--muted);font-size:.85rem}
-/* level map */
-.progress{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
-.progress i{display:block;height:100%;background:var(--ok);border-radius:99px}
-.levels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.lvl{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;border-radius:18px;padding:12px 14px;background:var(--surface)}
-.lvl .badge{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.05rem;background:var(--sound-bg);color:var(--sound);line-height:1;text-align:center;padding:2px}
-.lvl.done .badge{background:var(--ok-bg);color:var(--ok)}
-.lvl.locked{opacity:.55}
-.lvl.locked .badge{background:var(--line);color:var(--muted)}
+.pair span{color:var(--muted);font-size:.85rem;text-align:center}
+/* level path */
+.path{list-style:none;margin:0;padding:0;position:relative}
+.path::before{content:"";position:absolute;left:27px;top:28px;bottom:28px;width:4px;border-radius:2px;background:var(--line)}
+.path li{position:relative}
+.lvl{width:100%;display:grid;grid-template-columns:58px 1fr auto;gap:14px;align-items:center;text-align:left;background:none;padding:8px 0;border-radius:18px;font-weight:400}
+.node{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.05rem;background:var(--surface);color:var(--ink);border:4px solid var(--bg);position:relative;z-index:1}
+.lvl.done .node{background:var(--gold);color:var(--gold-ink)}
+.lvl.current .node{background:var(--red);color:#fff;box-shadow:0 0 0 4px var(--red-soft)}
+.lvl.locked .node{color:var(--muted)}
+.lvl.locked{opacity:.6}
 .lvl b{display:block;font-size:1.02rem}
-.lvl small{color:var(--muted)}
-.lvl .st{font-size:.85rem;font-weight:700;white-space:nowrap}
+.lvl small{color:var(--muted);font-size:.82rem}
+.lvl .st{font-size:.85rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .lvl.done .st{color:var(--ok)}
-.lvl.current{border:2px solid var(--accent)}
-/* stats */
+.tilegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xt{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;background:var(--surface);border-radius:20px;padding:14px;font-weight:400;min-height:110px;justify-content:space-between}
+.xt .em{font-size:1.6rem;line-height:1}
+.xt b{font-size:.98rem;line-height:1.25}
+.xt small{color:var(--muted);font-size:.8rem;font-variant-numeric:tabular-nums}
+/* progress & stats */
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
-.tile .v{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile{background:var(--surface);border-radius:20px;padding:14px}
+.tile .v{font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .tile .k{color:var(--muted);font-size:.85rem}
-.big{font-family:var(--display);font-weight:800;font-size:3.2rem;line-height:1;font-variant-numeric:tabular-nums}
+.tile.hero{grid-column:1/-1;background:var(--stage);color:var(--stage-ink)}
+.tile.hero .k{color:var(--stage-muted)}
+.tile.hero .v{font-size:2.2rem;color:var(--gold)}
+.big{font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1;font-variant-numeric:tabular-nums}
 .dots{display:flex;gap:6px;flex-wrap:wrap}
-.dots i{width:14px;height:14px;border-radius:50%;background:var(--line)}
-.dots i.y{background:var(--ok)} .dots i.n{background:var(--bad)} .dots i.c{outline:2px solid var(--accent);outline-offset:2px}
+.dots i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.18)}
+.dots i.y{background:var(--ok)} .dots i.n{background:var(--red)} .dots i.c{outline:2px solid var(--gold);outline-offset:2px}
 .seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
-.switch{display:flex;justify-content:space-between;align-items:center;gap:12px}
-input[type=range]{width:100%;accent-color:var(--accent)}
-.help ol{margin:6px 0 0;padding-left:20px}
-.help h3{margin:10px 0 0;font-size:1rem}
-/* tab bar */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
-  display:flex;justify-content:center;gap:4px;padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.tabs button{flex:1;max-width:180px;border:0;border-radius:12px;background:none;color:var(--muted);font-size:.85rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px}
-.tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.tabs button[aria-current="true"]{color:var(--accent);background:var(--bg)}
-@media (prefers-reduced-motion:reduce){button:active{transform:none}}
+.seg button[aria-pressed="true"]{background:var(--ink)!important;color:var(--bg)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.help ol{margin:4px 0 0;padding-left:20px}
+.help h3{margin-top:6px}
+/* quiz */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{min-height:84px;border-radius:20px;font-family:var(--display);font-size:1.3rem;background:rgba(255,255,255,.1);color:var(--stage-ink)}
+.opt.right{background:var(--ok)!important;color:#fff}
+.opt.wrong{background:var(--red)!important;color:#fff}
+/* streak week */
+.week{display:flex;gap:6px}
+.week span{flex:1;text-align:center;font-size:.72rem;color:var(--stage-muted)}
+.week span i{display:block;height:8px;border-radius:4px;background:rgba(255,255,255,.14);margin-bottom:4px}
+.week span.y i{background:var(--gold)}
+/* tabs & toast */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);
+  display:flex;justify-content:center;gap:2px;padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+.tabs button{flex:1;max-width:130px;background:none;color:var(--muted);font-size:.72rem;font-weight:700;flex-direction:column;gap:2px;padding:6px 2px;border-radius:14px;min-height:52px}
+.tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="true"]{color:var(--ink)}
+.tabs button[aria-current="true"] svg{stroke:var(--red)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-weight:700;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){button:active{transform:none}button.live,.wave.on i{animation:none}.wave.on i{height:14px}}
 </style>
 
 <div class="wrap" id="app"></div>
 <nav class="tabs" id="tabs"></nav>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-/* ================= content ================= */
+/* ================= content: levels ================= */
 const SETS=[
  {id:"ae",chip:"ä",title:{es:"ä — la fácil",de:"ä — der leichte"},
   tip:{es:"La «ä» es casi una «e» española, un poco más abierta (la boca algo más abierta). Larga en «Käse», corta en «Äpfel».",de:"Das ä ist fast ein spanisches «e», nur etwas offener (Mund weiter auf). Lang in «Käse», kurz in «Äpfel»."},
@@ -122,14 +180,14 @@ const SETS=[
  {id:"z",chip:"z",title:{es:"z = ts",de:"z = ts"},
   tip:{es:"La «z» alemana es «ts», como en «tsunami». Nunca es la «z» de España.",de:"Das deutsche z ist «ts» wie in «Tsunami», nie das spanische z (das wie englisches th klingt)."},
   words:[{w:"[Z]eit",ipa:"tsaɪ̯t"},{w:"[Z]ug",ipa:"tsuːk"},{w:"[z]ehn",ipa:"tseːn"},{w:"[Z]ucker",ipa:"ˈtsʊkɐ"},{w:"[z]wei",ipa:"tsvaɪ̯"},{w:"Pi[zz]a",ipa:"ˈpɪtsa"}]},
- {id:"end",chip:"-d -g",title:{es:"b, d, g al final",de:"b, d, g am Wortende"},
+ {id:"end",chip:"-d",title:{es:"b, d, g al final",de:"b, d, g am Wortende"},
   tip:{es:"Al final de la palabra, b, d y g suenan como p, t y k: «Hund» se dice «Hunt» y «Tag» se dice «Tak».",de:"Am Wortende klingen b, d, g wie p, t, k: «Hund» spricht man «Hunt», «Tag» wie «Tak»."},
   words:[{w:"Hun[d]",ipa:"hʊnt"},{w:"Ta[g]",ipa:"taːk"},{w:"Kin[d]",ipa:"kɪnt"},{w:"gel[b]",ipa:"ɡɛlp"},{w:"Freun[d]",ipa:"fʁɔʏ̯nt"}]},
- {id:"w",chip:"w b",title:{es:"w no es b",de:"w ist nicht b"},
+ {id:"w",chip:"w",title:{es:"w no es b",de:"w ist nicht b"},
   tip:{es:"La «w» alemana es como la «v» inglesa: los dientes de arriba tocan el labio de abajo. La «b» se hace cerrando los dos labios.",de:"Das deutsche w ist wie das englische v: obere Zähne auf die Unterlippe. Das b macht man mit beiden Lippen. Im Spanischen klingen b und v gleich, darum ist das schwer."},
   words:[{w:"[W]asser",ipa:"ˈvasɐ"},{w:"[W]ein",ipa:"vaɪ̯n"},{w:"[w]arum",ipa:"vaˈʁʊm"},{w:"[w]issen",ipa:"ˈvɪsn̩"}],
   pairs:[["Wein","Bein"],["Wald","bald"],["wir","Bier"]]},
- {id:"spst",chip:"sp st",title:{es:"sp y st al principio",de:"sp und st am Anfang"},
+ {id:"spst",chip:"sp",title:{es:"sp y st al principio",de:"sp und st am Anfang"},
   tip:{es:"Al inicio de palabra, «sp» suena «shp» y «st» suena «sht». Sin «e» delante: «Spanien», no «Espanien».",de:"Am Wortanfang klingt sp wie «schp» und st wie «scht». Kein «e» davor: «Spanien», nicht «Espanien»."},
   words:[{w:"[Sp]iel",ipa:"ʃpiːl"},{w:"[St]adt",ipa:"ʃtat"},{w:"[St]raße",ipa:"ˈʃtʁaːsə"},{w:"[sp]rechen",ipa:"ˈʃpʁɛçn̩"},{w:"[Sp]anien",ipa:"ˈʃpaːni̯ən"},{w:"[St]ern",ipa:"ʃtɛʁn"},{w:"[St]uhl",ipa:"ʃtuːl"}]},
  {id:"sch",chip:"sch",title:{es:"sch y sus combinaciones",de:"sch und Verbindungen"},
@@ -153,7 +211,7 @@ const SETS=[
   tip:{es:"Di una «i» y redondea los labios como para silbar una «u». La lengua se queda donde estaba la «i».",de:"Ein «i» sagen und die Lippen rund machen wie zum Pfeifen eines «u». Die Zunge bleibt beim «i»."},
   words:[{w:"[ü]ber",ipa:"ˈyːbɐ"},{w:"gr[ü]n",ipa:"ɡʁyːn"},{w:"T[ü]r",ipa:"tyːɐ̯"},{w:"m[ü]de",ipa:"ˈmyːdə"},{w:"f[ü]nf",ipa:"fʏnf"},{w:"Gl[ü]ck",ipa:"ɡlʏk"},{w:"Fr[ü]hst[ü]ck",ipa:"ˈfʁyːʃtʏk"},{w:"Br[ü]cke",ipa:"ˈbʁʏkə"}],
   pairs:[["vier","für"],["Mutter","Mütter"],["Kissen","küssen"]]},
- {id:"uml",chip:"ö ü",title:{es:"Umlauts en contraste",de:"Umlaute im Kontrast"},
+ {id:"uml",chip:"öü",title:{es:"Umlauts en contraste",de:"Umlaute im Kontrast"},
   tip:{es:"Escucha cada pareja varias veces. Con ö y ü los labios están igual de redondos que en o y u; lo que cambia es la lengua, que va hacia delante.",de:"Jedes Paar mehrmals anhören. Bei ö und ü sind die Lippen genauso rund wie bei o und u; anders ist die Zunge, die nach vorne geht."},
   words:[{w:"sch[o]n",ipa:"ʃoːn"},{w:"sch[ö]n",ipa:"ʃøːn"},{w:"M[u]tter",ipa:"ˈmʊtɐ"},{w:"M[ü]tter",ipa:"ˈmʏtɐ"},{w:"k[e]nnen",ipa:"ˈkɛnən"},{w:"k[ö]nnen",ipa:"ˈkœnən"}],
   pairs:[["schon","schön"],["Mutter","Mütter"],["Hölle","Hülle"],["kennen","können"],["Kiste","Küste"]]},
@@ -161,107 +219,156 @@ const SETS=[
   tip:{es:"No vibres la punta de la lengua. La punta descansa detrás de los dientes de abajo y el sonido sale de atrás, de la garganta: como una «j» de «jamón» muy suave pero con voz, o unas gárgaras ligeras. Al final de palabra («-er», «-r») casi desaparece y suena como una «a» corta: «Mutter» ≈ «Mutta».",de:"Nicht mit der Zungenspitze rollen. Die Spitze liegt hinter den unteren Zähnen, der Laut kommt hinten aus dem Rachen: wie ein sehr weiches spanisches «j» mit Stimme, oder leichtes Gurgeln. Am Wortende («-er», «-r») klingt es fast wie ein kurzes «a»: «Mutter» ≈ «Mutta»."},
   words:[{w:"[r]ot",ipa:"ʁoːt"},{w:"[R]eis",ipa:"ʁaɪ̯s"},{w:"[r]ichtig",ipa:"ˈʁɪçtɪç"},{w:"B[r]ot",ipa:"bʁoːt"},{w:"d[r]ei",ipa:"dʁaɪ̯"},{w:"F[r]au",ipa:"fʁaʊ̯"},{w:"g[r]ün",ipa:"ɡʁyːn"},{w:"Mutt[er]",ipa:"ˈmʊtɐ"},{w:"hie[r]",ipa:"hiːɐ̯"},{w:"Wass[er]",ipa:"ˈvasɐ"}],
   pairs:[["rot","Brot"],["Reis","drei"]]},
- {id:"len",chip:"aː a",title:{es:"Vocales largas y cortas",de:"Lange und kurze Vokale"},
+ {id:"len",chip:"aː",title:{es:"Vocales largas y cortas",de:"Lange und kurze Vokale"},
   tip:{es:"En alemán la duración cambia el significado. Vocal larga: tranquila y estirada. Vocal corta: rápida, casi siempre antes de doble consonante.",de:"Im Deutschen verändert die Länge die Bedeutung. Langer Vokal: ruhig und gedehnt. Kurzer Vokal: schnell, meist vor Doppelkonsonant. Im Spanischen sind alle Vokale gleich lang."},
   words:[{w:"St[aa]t",ipa:"ʃtaːt"},{w:"St[a]dt",ipa:"ʃtat"},{w:"M[ie]te",ipa:"ˈmiːtə"},{w:"M[i]tte",ipa:"ˈmɪtə"},{w:"[O]fen",ipa:"ˈoːfn̩"},{w:"[o]ffen",ipa:"ˈɔfn̩"}],
   pairs:[["Staat","Stadt"],["Miete","Mitte"],["Höhle","Hölle"],["Beet","Bett"]]},
- {id:"satz",chip:"Sätze",title:{es:"Frases del día a día",de:"Alltagssätze"},
+ {id:"satz",chip:"Aa",title:{es:"Frases del día a día",de:"Alltagssätze"},
   tip:{es:"Varios sonidos difíciles juntos. Escucha primero en lento, luego a velocidad normal.",de:"Mehrere schwierige Laute zusammen. Erst langsam anhören, dann in normalem Tempo."},
   words:[{w:"Ich möchte zwei Brötchen, bitte."},{w:"Schöne Grüße aus Hamburg!"},{w:"Ich schreibe meiner Schwester."},{w:"Das Frühstück ist fertig."},{w:"Ich höre gern Musik."},{w:"Ich spreche ein bisschen Deutsch."},{w:"Wie spät ist es?"}]},
  {id:"baecker",chip:"🥨",title:{es:"Final: en la panadería",de:"Finale: beim Bäcker"},
-  tip:{es:"El examen final: una compra completa en la panadería alemana. Si el iPhone te entiende aquí, ¡ya puedes pedir tus Brötchen sin miedo!",de:"Die Abschlussprüfung: ein kompletter Einkauf beim Bäcker. Wenn das Handy das versteht, klappt es auch an der Theke."},
+  tip:{es:"El examen final: una compra completa en la panadería alemana. Si el móvil te entiende aquí, ¡ya puedes pedir tus Brötchen sin miedo!",de:"Die Abschlussprüfung: ein kompletter Einkauf beim Bäcker. Wenn das Handy das versteht, klappt es auch an der Theke."},
   words:[{w:"Guten Morgen!"},{w:"Ich hätte gern vier Brötchen."},{w:"Mit Körnern, bitte."},{w:"Ein Stück Käsekuchen, bitte."},{w:"Kann ich mit Karte zahlen?"},{w:"Danke, schönes Wochenende!"}]}
 ];
+
+/* ================= content: extras (always open) ================= */
+const EXTRAS=[
+ {id:"arzt",group:"sit",chip:"🩺",title:{es:"En el médico",de:"Beim Arzt"},
+  tip:{es:"Frases para la consulta médica. Habla despacio y claro: es más importante que te entiendan que hablar rápido.",de:"Sätze für die Arztpraxis. Langsam und deutlich ist wichtiger als schnell."},
+  words:[{w:"Ich habe einen Termin."},{w:"Ich habe Kopfschmerzen."},{w:"Seit drei Tagen habe ich Fieber."},{w:"Brauche ich ein Rezept?"},{w:"Hier ist meine Versichertenkarte."},{w:"Wo ist die nächste Apotheke?"}]},
+ {id:"amt",group:"sit",chip:"🏛️",title:{es:"En el Bürgeramt",de:"Auf dem Amt"},
+  tip:{es:"Para trámites: empadronarse, pedir cita, entregar documentos. Pedir que repitan es totalmente normal.",de:"Für Behördengänge: anmelden, Termin, Unterlagen. Nachfragen ist völlig normal."},
+  words:[{w:"Ich möchte mich anmelden."},{w:"Ich brauche einen Termin."},{w:"Hier ist mein Reisepass."},{w:"Welche Unterlagen brauche ich?"},{w:"Können Sie das bitte wiederholen?"},{w:"Wie lange dauert das?"}]},
+ {id:"tel",group:"sit",chip:"📞",title:{es:"Al teléfono",de:"Am Telefon"},
+  tip:{es:"Por teléfono no hay gestos que ayuden: la pronunciación cuenta el doble. Ojo: al colgar se dice «auf Wiederhören», no «auf Wiedersehen».",de:"Am Telefon helfen keine Gesten, die Aussprache zählt doppelt. Am Ende sagt man «auf Wiederhören», nicht «auf Wiedersehen»."},
+  words:[{w:"Guten Tag, ich rufe wegen meines Termins an."},{w:"Können Sie bitte langsamer sprechen?"},{w:"Wie schreibt man das?"},{w:"Ich rufe später noch einmal an."},{w:"Vielen Dank, auf Wiederhören!"}]},
+ {id:"rest",group:"sit",chip:"🍽️",title:{es:"En el restaurante",de:"Im Restaurant"},
+  tip:{es:"Pedir, preguntar y pagar. «Stimmt so» significa «quédese con el cambio».",de:"Bestellen, fragen, bezahlen. «Stimmt so» heißt: Der Rest ist Trinkgeld."},
+  words:[{w:"Einen Tisch für zwei Personen, bitte."},{w:"Was empfehlen Sie?"},{w:"Ich nehme die Suppe."},{w:"Ein stilles Wasser, bitte."},{w:"Die Rechnung, bitte."},{w:"Zusammen oder getrennt?"},{w:"Stimmt so."}]},
+ {id:"job",group:"sit",chip:"💼",title:{es:"Entrevista de trabajo",de:"Vorstellungsgespräch"},
+  tip:{es:"Frases para causar buena impresión. Practícalas hasta que salgan sin pensar.",de:"Sätze für einen guten Eindruck. So lange üben, bis sie ohne Nachdenken kommen."},
+  words:[{w:"Vielen Dank für die Einladung."},{w:"Ich habe drei Jahre Berufserfahrung."},{w:"Meine Stärken sind Teamarbeit und Geduld."},{w:"Ab wann könnte ich anfangen?"},{w:"Ich habe noch eine Frage."},{w:"Vielen Dank für das Gespräch."}]},
+ {id:"zungen",group:"fun",chip:"🌀",title:{es:"Trabalenguas",de:"Zungenbrecher"},
+  tip:{es:"Ni los alemanes los dicen bien a la primera. Empieza en lento, luego más rápido. ¡Reírse está permitido!",de:"Auch Deutsche schaffen die nicht beim ersten Mal. Erst langsam, dann schneller. Lachen ist erlaubt!"},
+  words:[{w:"Fischers Fritz fischt frische Fische."},{w:"Blaukraut bleibt Blaukraut und Brautkleid bleibt Brautkleid."},{w:"Zwischen zwei Zwetschgenzweigen zwitschern zwei Schwalben."},{w:"Schnecken erschrecken, wenn Schnecken an Schnecken schlecken."},{w:"Der Potsdamer Postkutscher putzt den Potsdamer Postkutschkasten."}]},
+ {id:"nord",group:"fun",chip:"⚓",title:{es:"Alemán del norte",de:"Norddeutsch"},
+  tip:{es:"Palabras que se oyen cada día en el norte. «Moin» sirve a cualquier hora, no solo por la mañana.",de:"Wörter, die man im Norden jeden Tag hört. «Moin» geht zu jeder Uhrzeit, nicht nur morgens."},
+  words:[{w:"Moin!",ipa:"mɔɪ̯n"},{w:"Franzbrötchen",ipa:"ˈfʁantsbʁøːtçən"},{w:"Fischbrötchen",ipa:"ˈfɪʃbʁøːtçən"},{w:"Schietwetter",ipa:"ˈʃiːtvɛtɐ"},{w:"Tschüss!",ipa:"tʃʏs"},{w:"Feierabend",ipa:"ˈfaɪ̯ɐʔaːbn̩t"}]}
+];
+
 const PASS=80;
+const ALLSETS=[...SETS,...EXTRAS];
+const WORDIDX={};ALLSETS.forEach(s=>s.words.forEach(w=>{const k=w.w.replace(/[\[\]]/g,"");if(!WORDIDX[k])WORDIDX[k]=w}));
 
 /* ================= UI text ================= */
 const T={
- de:{sub:"Deutsch-Aussprache für Spanisch-Sprecher",tLevels:"Level",tStats:"Statistik",tSet:"Einstellungen",
-  level:"Level",passed:"Bestanden",open:"Offen",locked:"Gesperrt",best:"Bestes Ergebnis",ofLevels:(a,b)=>`${a} von ${b} Level bestanden`,
-  cont:"Weiter üben",own:"Eigene Wörter",ownSub:"Wörter, die du selbst üben willst",
-  back:"← Zurück",practice:"Üben",startExam:"Prüfung starten",examInfo:`Zum Bestehen: ${PASS} % richtig. Bestanden schaltet das nächste Level frei.`,
-  listen:"▶ Anhören",slow:"Langsam",yourTurn:"Jetzt du: sag das Wort",speak:"⌨️ Tastatur öffnen",
-  steps:["Tippe auf „Tastatur öffnen“.","Tippe auf das 🎤 in der Tastatur (deutsche Tastatur), nicht hier in der App.","Wort sagen, kurz warten. Es wird automatisch geprüft."],
-  recStart:"🎤 Sprechen",recOn:"● Ich höre zu … (tippen zum Stoppen)",recHint:"Tippe auf Sprechen und sag das Wort.",recNothing:"Ich habe nichts gehört. Tippe nochmal und sprich etwas lauter.",recDenied:"Hier ist kein Mikrofon erlaubt. Darum jetzt per Tastatur-Diktat:",recSiri:"Auf dem iPhone muss das Diktat an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Bis dahin per Tastatur-Diktat:",recNet:"Die Spracherkennung braucht Internet.",useDict:"Stattdessen Tastatur-Diktat benutzen",useRec:"🎤 Mikrofon-Knopf benutzen",
-  ph:"Hier erscheint, was das Handy verstanden hat",check:"Prüfen",again:"Nochmal",prev:"← Zurück",next:"Weiter →",
-  native:"Muttersprachler auf Wiktionary anhören ↗",pairs:"Paare: hör den Unterschied",words:"Wörter",
-  fbEmpty:"Tippe zuerst ins Feld und diktiere das Wort mit dem Mikrofon.",fbOk:"Perfekt! Verstanden als",fbHeard:"Das Handy hat verstanden:",fbAlmost:"Fast. Übe die markierten Wörter:",fbRetry:"Hör es dir langsam an und versuch es noch einmal.",
-  hOe:"Das ö klang wie «o» oder «e». Zunge auf «e», Lippen rund.",hUe:"Das ü klang wie «u» oder «i». Zunge auf «i», Lippen auf «u».",hUml:"Der Umlaut fehlt: prüf den Vokal.",
-  hCh:"Prüf das «ch»: mehr Luft, die Zunge berührt nichts.",hH:"Das h war nicht zu hören. Am Anfang leicht hauchen.",hE:"Da war ein «e» davor. Direkt mit «sch» anfangen.",
-  hSch:"Das «sch» war nicht klar. «Pssst» wie zum Leisesein, Lippen nach vorn, kein «e» davor.",hChSch:"Das war «sch» statt «ch». «ch» ist weicher: nur Luft, Lippen nicht nach vorn.",hR:"Prüf das r: im Rachen, Zungenspitze nicht rollen.",
-  exam:"Prüfung",itemOf:(a,b)=>`Wort ${a} von ${b}`,attempt:(a)=>`Versuch ${a} von 2`,skip:"Überspringen",cont2:"Weiter",retryWord:"Nochmal versuchen",
-  result:"Ergebnis",pass:(n)=>n?`Bestanden! „${n}“ ist freigeschaltet.`:"Bestanden! Du hast alle Level geschafft. Glückwunsch!",fail:`Noch nicht bestanden. Du brauchst ${PASS} %. Übe die roten Wörter und versuch es nochmal.`,
-  retryExam:"Prüfung wiederholen",toLevels:"Zu den Leveln",nextLevel:"Nächstes Level",correctOf:(a,b)=>`${a} von ${b} richtig`,
-  sTime:"Lernzeit",sStreak:"Tage in Folge",sWords:"Wörter geübt",sRate:"Trefferquote",sTries:"Antworten",sExams:"Prüfungen bestanden",sListens:"Mal angehört",
-  sHard:"Schwierige Wörter",sHardNone:"Noch keine. Weiter so!",sHardSub:"Wörter, die öfter falsch als richtig waren",sLevels:"Level-Fortschritt",
-  sSaved:"Der Fortschritt wird nur auf diesem Handy und in diesem Browser gespeichert.",
-  lang:"Sprache der App",rate:"Sprechtempo",rateN:"Normal",test:"Testmodus: alle Level freischalten",testSub:"Zum Ausprobieren. Prüfungen bleiben unverändert.",
+ de:{tToday:"Heute",tLevels:"Level",tExtras:"Extras",tStats:"Fortschritt",tSet:"Einstellungen",
+  hello:"Hallo!",streak:n=>n===1?"1 Tag":`${n} Tage`,
+  daily:"Wort des Tages",dailyDone:"Heute geschafft ✓",dailyGo:"Üben",
+  review:"Wiederholen",reviewN:n=>n===1?"1 Wort wartet auf dich":`${n} Wörter warten auf dich`,reviewNone:"Nichts fällig. Stark!",reviewSub:"Schwierige Wörter kommen automatisch zurück, bis sie sitzen.",reviewGo:"Jetzt wiederholen",
+  cont:"Weiter mit",quizCard:"Hör-Quiz",quizCardSub:"Hörst du den Unterschied? 10 Fragen.",quizGo:"Quiz starten",
+  level:"Level",passed:"Bestanden",open:"Offen",ofLevels:(a,b)=>`${a} von ${b} Level bestanden`,lockedMsg:"Bestehe zuerst die Prüfung im vorherigen Level.",
+  xSit:"Alltagssituationen",xFun:"Zum Spaß",own:"Eigene Wörter",ownSub:"Deine eigene Übungsliste",nWords:n=>`${n} Sätze`,nOwn:n=>`${n} Wörter`,
+  back:"← Zurück",practice:"Üben",test:"Test",startExam:"Prüfung starten",startTest:"Test starten",examInfo:`Ab ${PASS} % bestanden, dann geht das nächste Level auf.`,testInfo:"Teste dich ohne Druck. Dein bestes Ergebnis wird gespeichert.",best:"Bestes Ergebnis",
+  listen:"Anhören",slow:"Langsam",yourTurn:"Jetzt du",
+  recStart:"🎤 Sprechen",recOn:"● Ich höre zu … (tippen zum Stoppen)",recHint:"Tippe auf Sprechen und sag es laut.",recNothing:"Ich habe nichts gehört. Tippe nochmal und sprich etwas lauter.",recDenied:"Hier ist kein Mikrofon erlaubt. Darum jetzt per Tastatur-Diktat:",recSiri:"Auf dem iPhone muss das Diktat an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Bis dahin per Tastatur-Diktat:",recNet:"Die Spracherkennung braucht Internet.",useDict:"Tastatur-Diktat benutzen",useRec:"Mikrofon-Knopf benutzen",
+  kbOpen:"⌨️ Tastatur öffnen",steps:["Tippe auf „Tastatur öffnen“.","Tippe auf das 🎤 in der Tastatur (deutsche Tastatur).","Sag es und warte kurz. Wird automatisch geprüft."],ph:"Hier erscheint, was verstanden wurde",check:"Prüfen",again:"Nochmal",
+  self:"Mich aufnehmen",selfStop:"● Aufnahme … (tippen zum Stoppen)",selfMe:"▶ Ich",selfOrig:"▶ Original",selfHint:"Nimm dich auf und vergleiche mit dem Original.",selfDenied:"Aufnahme nicht möglich: Mikrofon nicht erlaubt.",
+  prev:"← Zurück",next:"Weiter →",native:"Muttersprachler auf Wiktionary ↗",pairs:"Paare: hör den Unterschied",words:"Wörter",quizThis:"Hör-Quiz zu diesem Level",
+  fbEmpty:"Erst etwas sagen oder diktieren.",fbOk:"Perfekt! Verstanden als",fbHeard:"Verstanden wurde:",fbAlmost:"Fast. Übe die markierten Wörter:",fbRetry:"Hör es dir langsam an und versuch es noch einmal.",
+  hOe:"Das ö klang wie «o» oder «e». Zunge auf «e», Lippen rund.",hUe:"Das ü klang wie «u» oder «i». Zunge auf «i», Lippen auf «u».",hUml:"Der Umlaut fehlt: prüf den Vokal.",hCh:"Prüf das «ch»: mehr Luft, die Zunge berührt nichts.",hH:"Das h war nicht zu hören. Am Anfang leicht hauchen.",hE:"Da war ein «e» davor. Direkt mit «sch» anfangen.",hSch:"Das «sch» war nicht klar. «Pssst», Lippen nach vorn, kein «e» davor.",hChSch:"Das war «sch» statt «ch». «ch» ist weicher: nur Luft.",hR:"Prüf das r: im Rachen, Zungenspitze nicht rollen.",
+  exam:"Prüfung",testT:"Test",reviewT:"Wiederholung",itemOf:(a,b)=>`${a} / ${b}`,attempt:a=>`Versuch ${a} von 2`,skip:"Überspringen",cont2:"Weiter",retryWord:"Nochmal versuchen",
+  result:"Ergebnis",pass:n=>n?`Bestanden! „${n}“ ist freigeschaltet.`:"Bestanden! Alle Level geschafft. Glückwunsch!",fail:`Noch nicht. Du brauchst ${PASS} %. Übe die roten und versuch es nochmal.`,doneTest:"Gut gemacht! Weiter so.",
+  retryExam:"Nochmal",toHome:"Fertig",nextLevel:"Nächstes Level",correctOf:(a,b)=>`${a} von ${b} richtig`,share:"Teilen",copied:"Text kopiert – jetzt einfügen und senden.",
+  shareLevel:(t,p)=>`Ich habe „${t}“ in Oye Deutsch mit ${p} % geschafft! Traust du dich? 🇩🇪`,shareStats:(s,n)=>`Seit ${s} Tagen in Folge übe ich Deutsch mit Oye Deutsch und habe schon ${n} Level bestanden! 💪`,
+  quiz:"Hör-Quiz",quizQ:"Welches Wort hörst du?",quizReplay:"Nochmal hören",quizNext:"Nächste Frage",quizEnd:"Ergebnis ansehen",quizRight:"Richtig!",quizWrong:w=>`Leider nein, es war „${w}“.`,quizScore:(a,b)=>`${a} von ${b} richtig gehört`,quizAgain:"Neues Quiz",
+  sTime:"Lernzeit",sStreak:"Tage in Folge",sWords:"Wörter geübt",sRate:"Treffer beim Sprechen",sTries:"Antworten",sExams:"Level bestanden",sQuiz:"Treffer im Hör-Quiz",sDue:"Zum Wiederholen",
+  sHard:"Schwierige Wörter",sHardNone:"Noch keine. Weiter so!",sLevels:"Level-Ergebnisse",sSaved:"Der Fortschritt wird nur auf diesem Handy und in diesem Browser gespeichert.",shareProg:"Fortschritt teilen",
+  lang:"Sprache der App",rate:"Sprechtempo",testMode:"Testmodus: alle Level freischalten",testSub:"Zum Ausprobieren. Prüfungen bleiben gleich.",on:"An",off:"Aus",
   reset:"Fortschritt zurücksetzen",resetQ:"Wirklich alle Ergebnisse, Zeiten und eigenen Wörter löschen?",yes:"Ja, löschen",no:"Abbrechen",resetDone:"Alles zurückgesetzt.",
-  help:"So funktioniert das Sprechen",iph:"iPhone",and:"Android",
-  helpI:["Einstellungen → Allgemein → Tastatur → Tastaturen → Tastatur hinzufügen → Deutsch.","„Diktierfunktion aktivieren“ einschalten.","In der App auf Sprechen tippen, mit 🌐 zur deutschen Tastatur wechseln und auf das Mikrofon tippen."],
-  helpA:["Gboard öffnen → Einstellungen → Sprachen → Deutsch hinzufügen.","In der App auf Sprechen tippen, mit 🌐 auf Deutsch wechseln.","Auf das Mikrofon in der Tastatur tippen und sprechen."],
-  helpN:"Kein Ton? Stummschalter aus, Lautstärke hoch, und den Link direkt im Browser öffnen (iPhone: Safari, Android: Chrome), nicht in WhatsApp oder einer anderen App.",
-  noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",
-  ttsFail:"Ton konnte nicht abgespielt werden. Stummschaltung aus? Sonst den Link direkt in Safari oder Chrome öffnen.",
-  add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",lockedMsg:"Bestehe zuerst die Prüfung im vorherigen Level.",
-  hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`},
- es:{sub:"Pronunciación alemana para hispanohablantes",tLevels:"Niveles",tStats:"Estadísticas",tSet:"Ajustes",
-  level:"Nivel",passed:"Superado",open:"Abierto",locked:"Bloqueado",best:"Mejor resultado",ofLevels:(a,b)=>`${a} de ${b} niveles superados`,
-  cont:"Seguir practicando",own:"Mis palabras",ownSub:"Palabras que quieres practicar tú",
-  back:"← Volver",practice:"Practicar",startExam:"Empezar examen",examInfo:`Para aprobar: ${PASS} % de aciertos. Al aprobar se desbloquea el siguiente nivel.`,
-  listen:"▶ Escuchar",slow:"Lento",yourTurn:"Ahora tú: di la palabra",speak:"⌨️ Abrir teclado",
-  steps:["Pulsa «Abrir teclado».","Toca el 🎤 del teclado (teclado alemán), no aquí en la app.","Di la palabra y espera un momento. Se comprueba sola."],
-  recStart:"🎤 Hablar",recOn:"● Te escucho … (toca para parar)",recHint:"Pulsa Hablar y di la palabra.",recNothing:"No he oído nada. Pulsa otra vez y habla un poco más alto.",recDenied:"Aquí no se permite el micrófono. Por eso, con el dictado del teclado:",recSiri:"En el iPhone el dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Mientras tanto, con el dictado del teclado:",recNet:"El reconocimiento de voz necesita internet.",useDict:"Usar el dictado del teclado",useRec:"🎤 Usar el botón de micrófono",
-  ph:"Aquí aparece lo que entendió el móvil",check:"Comprobar",again:"Otra vez",prev:"← Anterior",next:"Siguiente →",
-  native:"Escuchar a un nativo en Wiktionary ↗",pairs:"Parejas: escucha la diferencia",words:"Palabras",
-  fbEmpty:"Primero toca el campo y dicta la palabra con el micrófono.",fbOk:"¡Perfecto! Entendido como",fbHeard:"El móvil entendió:",fbAlmost:"Casi. Practica las palabras marcadas:",fbRetry:"Escucha otra vez en lento e inténtalo de nuevo.",
-  hOe:"La ö sonó como «o» o «e». Lengua en «e», labios redondos.",hUe:"La ü sonó como «u» o «i». Lengua en «i», labios en «u».",hUml:"Falta la diéresis: revisa la vocal.",
-  hCh:"Revisa la «ch»: más aire, sin tocar con la lengua.",hH:"No se oyó la h. Sopla un poco de aire al empezar.",hE:"Pusiste una «e» delante. Empieza directo con «sh».",
-  hSch:"La «sch» no salió clara. Haz «shhh» como para pedir silencio, labios hacia fuera, sin «e» delante.",hChSch:"Dijiste «sch» en vez de «ch». La «ch» es más suave: solo aire, sin labios hacia fuera.",hR:"Revisa la «r»: en la garganta, sin vibrar la punta de la lengua.",
-  exam:"Examen",itemOf:(a,b)=>`Palabra ${a} de ${b}`,attempt:(a)=>`Intento ${a} de 2`,skip:"Saltar",cont2:"Seguir",retryWord:"Intentar otra vez",
-  result:"Resultado",pass:(n)=>n?`¡Aprobado! «${n}» está desbloqueado.`:"¡Aprobado! Has superado todos los niveles. ¡Enhorabuena!",fail:`Todavía no. Necesitas un ${PASS} %. Practica las palabras en rojo y vuelve a intentarlo.`,
-  retryExam:"Repetir examen",toLevels:"Ir a los niveles",nextLevel:"Siguiente nivel",correctOf:(a,b)=>`${a} de ${b} correctas`,
-  sTime:"Tiempo de estudio",sStreak:"Días seguidos",sWords:"Palabras practicadas",sRate:"Aciertos",sTries:"Respuestas",sExams:"Exámenes aprobados",sListens:"Veces escuchado",
-  sHard:"Palabras difíciles",sHardNone:"Ninguna todavía. ¡Sigue así!",sHardSub:"Palabras con más fallos que aciertos",sLevels:"Progreso por nivel",
-  sSaved:"El progreso se guarda solo en este móvil y en este navegador.",
-  lang:"Idioma de la app",rate:"Velocidad de la voz",rateN:"Normal",test:"Modo prueba: desbloquear todos los niveles",testSub:"Para probar la app. Los exámenes no cambian.",
+  help:"So funktioniert das Sprechen",helpMic:"Am besten: auf „Sprechen“ tippen und das Mikrofon erlauben. Klappt das nicht, gibt es das Tastatur-Diktat:",iph:"iPhone",and:"Android",
+  helpI:["Einstellungen → Allgemein → Tastatur → Tastaturen → Deutsch hinzufügen.","„Diktierfunktion aktivieren“ einschalten."],
+  helpA:["Gboard → Einstellungen → Sprachen → Deutsch hinzufügen.","Im Feld mit 🌐 auf Deutsch wechseln und das Mikrofon antippen."],
+  helpN:"Kein Ton? Stummschalter aus, Lautstärke hoch, Link direkt in Safari oder Chrome öffnen.",
+  noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Ton konnte nicht abgespielt werden. Stummschaltung aus? Sonst den Link direkt in Safari oder Chrome öffnen.",
+  add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
+  hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"]},
+ es:{tToday:"Hoy",tLevels:"Niveles",tExtras:"Extras",tStats:"Progreso",tSet:"Ajustes",
+  hello:"¡Hola!",streak:n=>n===1?"1 día":`${n} días`,
+  daily:"Palabra del día",dailyDone:"Hecho hoy ✓",dailyGo:"Practicar",
+  review:"Repasar",reviewN:n=>n===1?"1 palabra te espera":`${n} palabras te esperan`,reviewNone:"Nada pendiente. ¡Genial!",reviewSub:"Las palabras difíciles vuelven solas hasta que te salgan bien.",reviewGo:"Repasar ahora",
+  cont:"Seguir con",quizCard:"Quiz de oído",quizCardSub:"¿Oyes la diferencia? 10 preguntas.",quizGo:"Empezar quiz",
+  level:"Nivel",passed:"Superado",open:"Abierto",ofLevels:(a,b)=>`${a} de ${b} niveles superados`,lockedMsg:"Primero aprueba el examen del nivel anterior.",
+  xSit:"Situaciones del día a día",xFun:"Por diversión",own:"Mis palabras",ownSub:"Tu propia lista",nWords:n=>`${n} frases`,nOwn:n=>`${n} palabras`,
+  back:"← Volver",practice:"Practicar",test:"Test",startExam:"Empezar examen",startTest:"Empezar test",examInfo:`Con un ${PASS} % apruebas y se abre el siguiente nivel.`,testInfo:"Ponte a prueba sin presión. Se guarda tu mejor resultado.",best:"Mejor resultado",
+  listen:"Escuchar",slow:"Lento",yourTurn:"Ahora tú",
+  recStart:"🎤 Hablar",recOn:"● Te escucho … (toca para parar)",recHint:"Pulsa Hablar y dilo en voz alta.",recNothing:"No he oído nada. Pulsa otra vez y habla un poco más alto.",recDenied:"Aquí no se permite el micrófono. Por eso, con el dictado del teclado:",recSiri:"En el iPhone el dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Mientras tanto, con el dictado del teclado:",recNet:"El reconocimiento de voz necesita internet.",useDict:"Usar el dictado del teclado",useRec:"Usar el botón de micrófono",
+  kbOpen:"⌨️ Abrir teclado",steps:["Pulsa «Abrir teclado».","Toca el 🎤 del teclado (teclado alemán).","Dilo y espera un momento. Se comprueba solo."],ph:"Aquí aparece lo que se entendió",check:"Comprobar",again:"Otra vez",
+  self:"Grabarme",selfStop:"● Grabando … (toca para parar)",selfMe:"▶ Yo",selfOrig:"▶ Original",selfHint:"Grábate y compárate con el original.",selfDenied:"No se puede grabar: micrófono no permitido.",
+  prev:"← Anterior",next:"Siguiente →",native:"Nativo en Wiktionary ↗",pairs:"Parejas: escucha la diferencia",words:"Palabras",quizThis:"Quiz de oído de este nivel",
+  fbEmpty:"Primero di o dicta algo.",fbOk:"¡Perfecto! Entendido como",fbHeard:"Se entendió:",fbAlmost:"Casi. Practica las palabras marcadas:",fbRetry:"Escucha otra vez en lento e inténtalo de nuevo.",
+  hOe:"La ö sonó como «o» o «e». Lengua en «e», labios redondos.",hUe:"La ü sonó como «u» o «i». Lengua en «i», labios en «u».",hUml:"Falta la diéresis: revisa la vocal.",hCh:"Revisa la «ch»: más aire, sin tocar con la lengua.",hH:"No se oyó la h. Sopla un poco de aire al empezar.",hE:"Pusiste una «e» delante. Empieza directo con «sh».",hSch:"La «sch» no salió clara. «Shhh», labios hacia fuera, sin «e» delante.",hChSch:"Dijiste «sch» en vez de «ch». La «ch» es más suave: solo aire.",hR:"Revisa la «r»: en la garganta, sin vibrar la punta de la lengua.",
+  exam:"Examen",testT:"Test",reviewT:"Repaso",itemOf:(a,b)=>`${a} / ${b}`,attempt:a=>`Intento ${a} de 2`,skip:"Saltar",cont2:"Seguir",retryWord:"Intentar otra vez",
+  result:"Resultado",pass:n=>n?`¡Aprobado! «${n}» está desbloqueado.`:"¡Aprobado! Has superado todos los niveles. ¡Enhorabuena!",fail:`Todavía no. Necesitas un ${PASS} %. Practica las rojas y vuelve a intentarlo.`,doneTest:"¡Bien hecho! Sigue así.",
+  retryExam:"Repetir",toHome:"Listo",nextLevel:"Siguiente nivel",correctOf:(a,b)=>`${a} de ${b} correctas`,share:"Compartir",copied:"Texto copiado: pégalo y envíalo.",
+  shareLevel:(t,p)=>`¡He superado «${t}» en Oye Deutsch con un ${p} %! ¿Te atreves? 🇩🇪`,shareStats:(s,n)=>`¡Llevo ${s} días seguidos practicando alemán con Oye Deutsch y ya he superado ${n} niveles! 💪`,
+  quiz:"Quiz de oído",quizQ:"¿Qué palabra oyes?",quizReplay:"Escuchar otra vez",quizNext:"Siguiente pregunta",quizEnd:"Ver resultado",quizRight:"¡Correcto!",quizWrong:w=>`No, era «${w}».`,quizScore:(a,b)=>`${a} de ${b} bien oídas`,quizAgain:"Nuevo quiz",
+  sTime:"Tiempo de estudio",sStreak:"Días seguidos",sWords:"Palabras practicadas",sRate:"Aciertos hablando",sTries:"Respuestas",sExams:"Niveles superados",sQuiz:"Aciertos en el quiz",sDue:"Para repasar",
+  sHard:"Palabras difíciles",sHardNone:"Ninguna todavía. ¡Sigue así!",sLevels:"Resultados por nivel",sSaved:"El progreso se guarda solo en este móvil y en este navegador.",shareProg:"Compartir progreso",
+  lang:"Idioma de la app",rate:"Velocidad de la voz",testMode:"Modo prueba: desbloquear todos los niveles",testSub:"Para probar la app. Los exámenes no cambian.",on:"Sí",off:"No",
   reset:"Borrar progreso",resetQ:"¿Seguro que quieres borrar resultados, tiempos y tus palabras?",yes:"Sí, borrar",no:"Cancelar",resetDone:"Todo borrado.",
-  help:"Cómo funciona hablar",iph:"iPhone",and:"Android",
-  helpI:["Ajustes → General → Teclado → Teclados → Añadir teclado → Alemán.","Activa «Dictado».","En la app pulsa Hablar, cambia al teclado alemán con 🌐 y toca el micrófono."],
-  helpA:["Abre Gboard → Ajustes → Idiomas → añade Alemán.","En la app pulsa Hablar y cambia a alemán con 🌐.","Toca el micrófono del teclado y habla."],
-  helpN:"¿No suena? Quita el modo silencio, sube el volumen y abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome), no dentro de WhatsApp u otra app.",
-  noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",
-  ttsFail:"No se pudo reproducir. ¿Modo silencio? Si no, abre el enlace directamente en Safari o Chrome.",
-  add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",lockedMsg:"Primero aprueba el examen del nivel anterior.",
-  hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`}
+  help:"Cómo funciona hablar",helpMic:"Lo mejor: pulsa «Hablar» y permite el micrófono. Si no funciona, usa el dictado del teclado:",iph:"iPhone",and:"Android",
+  helpI:["Ajustes → General → Teclado → Teclados → añadir Alemán.","Activa «Dictado»."],
+  helpA:["Gboard → Ajustes → Idiomas → añadir Alemán.","En el campo cambia a alemán con 🌐 y toca el micrófono."],
+  helpN:"¿No suena? Quita el modo silencio, sube el volumen y abre el enlace directamente en Safari o Chrome.",
+  noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"No se pudo reproducir. ¿Modo silencio? Si no, abre el enlace directamente en Safari o Chrome.",
+  add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
+  hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"]}
 };
 
 /* ================= state ================= */
-const KEY="smb2";
-function fresh(){return{lang:(navigator.language||"").toLowerCase().startsWith("es")?"es":"de",rate:0.9,test:false,best:{},words:{},stats:{tries:0,ok:0,listens:0,secs:0},days:[],custom:[]}}
+const KEY="oye-deutsch";
+function fresh(){return{lang:(navigator.language||"").toLowerCase().startsWith("es")?"es":"de",rate:0.9,test:false,best:{},words:{},srs:{},
+  stats:{tries:0,ok:0,listens:0,secs:0,quiz:0,quizOk:0},days:[],custom:[],dailyDone:""}}
 let S=fresh();
-try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw))}catch(e){}
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S=Object.assign(fresh(),o);S.stats=Object.assign(fresh().stats,o.stats||{})}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const L=()=>T[S.lang];
 const tx=o=>o?(typeof o==="string"?o:(o[S.lang]||o.es)):"";
 
-/* ui state (not persisted) */
-let view="home", lvl=0, wi=0, exam=null, confirmReset=false, flash="";
+/* ui state */
+let view="today",cur={kind:"level",i:0},wi=0,exam=null,quiz=null,reviewList=[],confirmReset=false,flash="";
 
 /* ================= helpers ================= */
+const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const plain=s=>s.replace(/[\[\]]/g,"");
 const marked=s=>esc(s).replace(/\[([^\]]+)\]/g,"<mark>$1</mark>");
-const norm=s=>s.toLowerCase().replace(/ß/g,"ss").replace(/[.,!?¿¡;:"'«»„“”]/g," ").replace(/\s+/g," ").trim();
+const NUM={"0":"null","1":"eins","2":"zwei","3":"drei","4":"vier","5":"fünf","6":"sechs","7":"sieben","8":"acht","9":"neun","10":"zehn","11":"elf","12":"zwölf","20":"zwanzig"};
+const norm=s=>s.replace(/(\d+):00/g,"$1").replace(/\b\d+\b/g,m=>NUM[m]||m).toLowerCase().replace(/ß/g,"ss").replace(/[.,!?¿¡;:"'«»„“”–-]/g," ").replace(/\s+/g," ").trim();
 const deUml=s=>s.replace(/ö/g,"o").replace(/ü/g,"u").replace(/ä/g,"a");
-const today=()=>new Date().toISOString().slice(0,10);
+const dayKey=d=>{const x=d||new Date();return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const today=()=>dayKey();
 const playIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
+const wave='<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
 function markDay(){const d=today();if(!S.days.includes(d)){S.days.push(d);if(S.days.length>400)S.days=S.days.slice(-400)}}
-function streak(){const set=new Set(S.days);let n=0;const d=new Date();if(!set.has(today()))d.setDate(d.getDate()-1);
-  while(set.has(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}return n}
+function streak(){const set=new Set(S.days);let n=0;const d=new Date();if(!set.has(today()))d.setDate(d.getDate()-1);while(set.has(dayKey(d))){n++;d.setDate(d.getDate()-1)}return n}
 function unlocked(i){return S.test||i===0||(S.best[SETS[i-1].id]||0)>=PASS}
 function isPassed(i){return (S.best[SETS[i].id]||0)>=PASS}
-function currentSet(){return lvl===-1?{id:"own",title:{es:T.es.own,de:T.de.own},tip:"",words:S.custom.map(w=>({w}))}:SETS[lvl]}
+function nextLevelIdx(){let c=SETS.findIndex((s,i)=>unlocked(i)&&!isPassed(i));return c<0?SETS.length-1:c}
+function dueWords(){const now=Date.now();return Object.entries(S.srs).filter(([k,v])=>v.d<=now).sort((a,b)=>a[1].d-b[1].d).map(([k])=>k)}
+function dailyWord(){const pool=SETS.flatMap(s=>s.words).filter(w=>!plain(w.w).includes(" "));let h=0;for(const c of today())h=(h*31+c.charCodeAt(0))>>>0;return pool[h%pool.length]}
+function getSet(c){c=c||cur;
+  if(c.kind==="level")return SETS[c.i];
+  if(c.kind==="extra")return EXTRAS[c.i];
+  if(c.kind==="own")return{id:"own",chip:"+",title:{es:T.es.own,de:T.de.own},tip:"",words:S.custom.map(w=>({w}))};
+  if(c.kind==="daily")return{id:"daily",chip:"★",title:{es:T.es.daily,de:T.de.daily},tip:"",words:[dailyWord()]};
+  if(c.kind==="review")return{id:"review",chip:"↺",title:{es:T.es.reviewT,de:T.de.reviewT},tip:"",words:reviewList.map(k=>WORDIDX[k]||{w:k})};
+}
+function toast(msg){const t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{t.hidden=true},2600)}
+async function share(text){const url=location.origin+location.pathname;
+  if(navigator.share){try{await navigator.share({title:"Oye Deutsch",text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(text+" "+url);toast(L().copied)}catch(e){toast(text+" "+url)}}
 
 /* ================= speech output ================= */
 const hasTTS=("speechSynthesis" in window)&&typeof SpeechSynthesisUtterance!=="undefined";
@@ -269,7 +376,8 @@ let voice=null;
 function pickVoice(){if(!hasTTS)return;const vs=speechSynthesis.getVoices().filter(v=>/^de([-_]|$)/i.test(v.lang));
   voice=vs.find(v=>/de[-_]DE/i.test(v.lang)&&v.localService)||vs.find(v=>/de[-_]DE/i.test(v.lang))||vs[0]||null}
 if(hasTTS){pickVoice();try{speechSynthesis.addEventListener("voiceschanged",pickVoice)}catch(e){speechSynthesis.onvoiceschanged=pickVoice}}
-function ttsWarn(on){const b=document.getElementById("ttsWarn");if(b)b.hidden=!on}
+function ttsWarn(on){const b=$("ttsWarn");if(b)b.hidden=!on}
+function waveOn(on){document.querySelectorAll(".wave").forEach(w=>w.classList.toggle("on",on))}
 function speak(text,slow){
   S.stats.listens++;markDay();save();
   if(!hasTTS){ttsWarn(true);return}
@@ -277,11 +385,11 @@ function speak(text,slow){
   const go=()=>{let started=false;
     const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";if(voice)u.voice=voice;
     u.rate=slow?Math.max(.35,S.rate*.55):S.rate;u.pitch=1;u.volume=1;
-    u.onstart=()=>{started=true;ttsWarn(false)};u.onerror=()=>{if(!started)ttsWarn(true)};
+    u.onstart=()=>{started=true;ttsWarn(false);waveOn(true)};u.onend=()=>waveOn(false);
+    u.onerror=()=>{waveOn(false);if(!started)ttsWarn(true)};
     try{speechSynthesis.resume()}catch(e){}
     speechSynthesis.speak(u);
     setTimeout(()=>{if(!started&&!speechSynthesis.speaking)ttsWarn(true)},2500)};
-  /* iOS and Android both drop speak() issued right after cancel() */
   if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,150)}else go();
 }
 
@@ -295,7 +403,7 @@ function evaluate(target,heard){
     return{ok:false,cls:"warn",html:`${esc(l.fbHeard)} «${esc(heard.trim())}»<br>${esc(l.fbAlmost)}<br>${toks}`}}
   let hint="";
   if(deUml(t)===deUml(h)||deUml(t)===h.replace(/e/g,"o")){hint=t.includes("ö")?l.hOe:t.includes("ü")?l.hUe:l.hUml}
-  else if(t.includes("sch")&&(h===t.replace(/sch/g,"s")||h===t.replace(/sch/g,"ch")||h==="e"+t))hint=t.startsWith("sch")&&h==="e"+t?l.hE:l.hSch;
+  else if(t.includes("sch")&&(h===t.replace(/sch/g,"s")||h===t.replace(/sch/g,"ch")||h==="e"+t))hint=h==="e"+t?l.hE:l.hSch;
   else if(/^(sp|st)/.test(t)&&h==="e"+t)hint=l.hE;
   else if(t.includes("ch")&&!t.includes("sch")&&h===t.replace(/ch/g,"sch"))hint=l.hChSch;
   else if(t.includes("ch")&&h.replace(/sch|tsch|k|j/g,"ch")===t)hint=l.hCh;
@@ -303,154 +411,15 @@ function evaluate(target,heard){
   else if(t.includes("r")&&(h===t.replace(/r/g,"l")||h===t.replace(/r/g,"")||h===t.replace(/r/g,"rr")))hint=l.hR;
   return{ok:false,cls:"bad",html:`${esc(l.fbHeard)} <b>«${esc(heard.trim())}»</b><br>${esc(hint||l.fbRetry)}`};
 }
+const GAPS=[0,1,2,4,8,16];
 function record(word,ok){
   const k=plain(word);const r=S.words[k]||(S.words[k]={ok:0,fail:0});
-  ok?r.ok++:r.fail++;S.stats.tries++;if(ok)S.stats.ok++;markDay();save();
-}
-
-/* ================= views ================= */
-const app=document.getElementById("app");
-function header(){const l=L();return `<header><h1>Oye <span>Deutsch</span></h1><p class="sub">${esc(l.sub)}</p></header>
- <div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`}
-
-function vHome(){
-  const l=L();const done=SETS.filter((s,i)=>isPassed(i)).length;
-  let cur=SETS.findIndex((s,i)=>unlocked(i)&&!isPassed(i));if(cur<0)cur=SETS.length-1;
-  const items=SETS.map((s,i)=>{const u=unlocked(i),p=isPassed(i),b=S.best[s.id];
-    const st=p?`★ ${b} %`:u?(b!=null?`${b} %`:l.open):"🔒";
-    return `<li><button class="lvl ${p?"done":""} ${u?"":"locked"} ${i===cur&&!p?"current":""}" data-act="open" data-i="${i}" ${u?"":'aria-disabled="true"'}>
-      <span class="badge">${esc(s.chip)}</span><span><small>${esc(l.level)} ${i+1}</small><b>${esc(tx(s.title))}</b></span><span class="st">${esc(st)}</span></button></li>`}).join("");
-  return `${header()}
-  <section class="card"><div class="label">${esc(l.ofLevels(done,SETS.length))}</div>
-    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${SETS.length}" aria-valuenow="${done}"><i style="width:${Math.round(done/SETS.length*100)}%"></i></div>
-    <button class="primary" data-act="open" data-i="${cur}">${esc(l.cont)}: ${esc(tx(SETS[cur].title))}</button></section>
-  <ol class="levels">${items}</ol>
-  <button class="lvl" data-act="own"><span class="badge">+</span><span><b>${esc(l.own)}</b><small>${esc(l.ownSub)}</small></span><span class="st">${S.custom.length}</span></button>
-  ${flash?`<div class="fb warn">${esc(flash)}</div>`:""}`;
-}
-
-function practiceCard(){
-  const l=L(),s=currentSet();
-  if(!s.words.length)return "";
-  const w=s.words[wi],p=plain(w.w),isS=p.includes(" ");
-  return `<section class="card" aria-live="polite">
-   <div class="label">${esc(l.practice)} · ${wi+1}/${s.words.length}</div>
-   <p class="word ${isS?"sentence":""}">${marked(w.w)}</p>
-   ${w.ipa?`<div class="ipa">[${esc(w.ipa)}]</div>`:""}
-   ${w.note?`<div class="note">${esc(tx(w.note))}</div>`:""}
-   <div class="row"><button class="primary" data-act="listen">${esc(l.listen)}</button><button data-act="slow">${esc(l.slow)}</button></div>
-   ${speakBlock()}
-   <div class="nav2"><button data-act="prev">${esc(l.prev)}</button><button data-act="next">${esc(l.next)}</button></div>
-   ${isS?"":`<a class="native" href="https://de.wiktionary.org/wiki/${encodeURIComponent(p)}" target="_blank" rel="noopener">${esc(l.native)}</a>`}
-  </section>`;
-}
-function speakBlock(){const l=L();
- if(micMode==="sr")return `<div class="label">${esc(l.yourTurn)}</div>
-   <button class="speak" data-act="rec" id="recBtn">${esc(l.recStart)}</button>
-   <p class="status" id="recStatus">${esc(l.recHint)}</p>
-   <div id="fb" class="fb" hidden></div>
-   <button class="ghost" data-act="usedict" style="align-self:flex-start">${esc(l.useDict)}</button>`;
- return `<div class="label">${esc(l.yourTurn)}</div>${micNote?`<div class="fb warn">${esc(micNote)}</div>`:""}
-   <button class="speak" data-act="speak">${esc(l.speak)}</button>
-   <ol class="steps">${l.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
-   <input type="text" id="said" lang="de" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${esc(l.ph)}">
-   <div class="row"><button data-act="check" id="btnCheck">${esc(l.check)}</button><button data-act="clear">${esc(l.again)}</button></div>
-   <div id="fb" class="fb" hidden></div>${SR?`<button class="ghost" data-act="userec" style="align-self:flex-start">${esc(l.useRec)}</button>`:""}`}
-
-function vLevel(){
-  const l=L(),s=currentSet(),own=lvl===-1;
-  const list=s.words.map((w,i)=>{const r=S.words[plain(w.w)];
-    return `<li><button class="w" data-act="pick" data-i="${i}" aria-current="${i===wi}">${marked(w.w)}</button><span class="cnt">${r&&r.ok?"✓ "+r.ok:""}</span>
-     <button class="play" data-say="${esc(plain(w.w))}" aria-label="${esc(l.listen)} ${esc(plain(w.w))}">${playIcon}</button>
-     ${own?`<button class="ghost" data-act="del" data-i="${i}">${esc(l.del)}</button>`:""}</li>`}).join("");
-  const pairs=s.pairs?`<div class="label">${esc(l.pairs)}</div>`+s.pairs.map(p=>`<div class="pair"><button data-say="${esc(p[0])}">${esc(p[0])}</button><span>vs</span><button data-say="${esc(p[1])}">${esc(p[1])}</button></div>`).join(""):"";
-  return `<div class="row"><button class="ghost" data-act="home">${esc(l.back)}</button></div>
-  <header><div class="label">${own?"":esc(l.level)+" "+(lvl+1)}</div><h2>${esc(tx(s.title))}</h2></header>
-  <div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>
-  ${own?`<section class="card"><label class="label" for="ownIn">${esc(l.ownSub)}</label><input type="text" id="ownIn" lang="de" placeholder="${esc(l.addPh)}" autocomplete="off"><button class="primary" data-act="add">${esc(l.add)}</button></section>`:`<p class="tip">${esc(tx(s.tip))}</p>`}
-  ${s.words.length?practiceCard():`<p class="sub">${esc(l.ownNone)}</p>`}
-  ${own?"":`<section class="card"><div class="label">${esc(l.exam)}</div><p style="margin:0">${esc(l.examInfo)}</p>
-    ${S.best[s.id]!=null?`<div class="sub">${esc(l.best)}: ${S.best[s.id]} %</div>`:""}
-    <button class="primary" data-act="exam">${esc(l.startExam)}</button></section>`}
-  ${s.words.length?`<section class="card"><div class="label">${esc(l.words)}</div><ul class="list">${list}</ul>${pairs}</section>`:""}`;
-}
-
-function vExam(){
-  const l=L(),s=SETS[exam.lvl],idx=exam.order[exam.i],w=s.words[idx],p=plain(w.w);
-  const dots=exam.order.map((_,k)=>`<i class="${exam.res[k]===true?"y":exam.res[k]===false?"n":""} ${k===exam.i?"c":""}"></i>`).join("");
-  return `<div class="row"><button class="ghost" data-act="levelback">${esc(l.back)}</button></div>
-  <header><div class="label">${esc(l.exam)} · ${esc(l.level)} ${exam.lvl+1}</div><h2>${esc(tx(s.title))}</h2></header>
-  <div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>
-  <section class="card" aria-live="polite">
-   <div class="row" style="justify-content:space-between"><span class="label">${esc(l.itemOf(exam.i+1,exam.order.length))}</span><span class="label">${esc(l.attempt(exam.tries+1))}</span></div>
-   <div class="dots">${dots}</div>
-   <p class="word ${p.includes(" ")?"sentence":""}">${marked(w.w)}</p>
-   <div class="row"><button data-act="listen">${esc(l.listen)}</button><button data-act="slow">${esc(l.slow)}</button></div>
-   ${speakBlock()}
-   <div class="row" id="examCtl"><button data-act="eskip">${esc(l.skip)}</button></div>
-  </section>`;
-}
-
-function vResult(){
-  const l=L(),s=SETS[exam.lvl],n=exam.res.filter(x=>x).length,pct=Math.round(n/exam.order.length*100),ok=pct>=PASS;
-  const nx=SETS[exam.lvl+1];
-  const rows=exam.order.map((idx,k)=>`<li><span class="w" style="flex:1;padding:12px 2px">${exam.res[k]?"✓":"✗"} ${marked(s.words[idx].w)}</span><button class="play" data-say="${esc(plain(s.words[idx].w))}" aria-label="${esc(l.listen)}">${playIcon}</button></li>`).join("");
-  return `<header><div class="label">${esc(l.result)} · ${esc(l.level)} ${exam.lvl+1}</div><h2>${esc(tx(s.title))}</h2></header>
-  <section class="card"><div class="big" style="color:var(${ok?"--ok":"--bad"})">${pct} %</div><div class="sub">${esc(l.correctOf(n,exam.order.length))}</div>
-   <div class="fb ${ok?"ok":"bad"}">${esc(ok?l.pass(nx?tx(nx.title):""):l.fail)}</div>
-   <div class="row">${ok&&nx?`<button class="primary" data-act="open" data-i="${exam.lvl+1}">${esc(l.nextLevel)}</button>`:""}
-   <button ${ok?"":'class="primary"'} data-act="exam">${esc(l.retryExam)}</button><button data-act="home">${esc(l.toLevels)}</button></div></section>
-  <section class="card"><ul class="list">${rows}</ul></section>`;
-}
-
-function vStats(){
-  const l=L(),st=S.stats,h=Math.floor(st.secs/3600),m=Math.floor(st.secs%3600/60);
-  const practiced=Object.keys(S.words).length,rate=st.tries?Math.round(st.ok/st.tries*100):0;
-  const exams=SETS.filter((s,i)=>isPassed(i)).length;
-  const hard=Object.entries(S.words).filter(([k,r])=>r.fail>r.ok).sort((a,b)=>(b[1].fail-b[1].ok)-(a[1].fail-a[1].ok)).slice(0,12);
-  const tile=(v,k)=>`<div class="tile"><div class="v">${esc(v)}</div><div class="k">${esc(k)}</div></div>`;
-  const lv=SETS.map((s,i)=>{const b=S.best[s.id];return `<li style="display:grid;grid-template-columns:1fr 90px 46px;gap:10px;align-items:center;padding:8px 0"><span style="min-width:0">${i+1}. ${esc(tx(s.title))}</span>
-    <span class="progress"><i style="width:${b||0}%;${b!=null&&b<PASS?"background:var(--warn)":""}"></i></span><span class="cnt" style="color:var(--muted);text-align:right">${b!=null?b+" %":"–"}</span></li>`}).join("");
-  return `<header><h2>${esc(l.tStats)}</h2></header>
-  <div class="tiles">${tile(l.hm(h,m),l.sTime)}${tile(streak(),l.sStreak)}${tile(practiced,l.sWords)}${tile(rate+" %",l.sRate)}${tile(st.tries,l.sTries)}${tile(exams+" / "+SETS.length,l.sExams)}</div>
-  <section class="card"><div class="label">${esc(l.sHard)}</div><div class="sub" style="margin:0">${esc(l.sHardSub)}</div>
-   ${hard.length?`<ul class="list">${hard.map(([k,r])=>`<li><span style="flex:1;padding:10px 2px">${esc(k)}</span><span class="cnt" style="color:var(--bad)">✗ ${r.fail} · ✓ ${r.ok}</span><button class="play" data-say="${esc(k)}" aria-label="${esc(l.listen)} ${esc(k)}">${playIcon}</button></li>`).join("")}</ul>`:`<p style="margin:0">${esc(l.sHardNone)}</p>`}</section>
-  <section class="card"><div class="label">${esc(l.sLevels)}</div><ul style="list-style:none;margin:0;padding:0">${lv}</ul></section>
-  <p class="sub">${esc(l.sSaved)}</p>`;
-}
-
-function vSettings(){
-  const l=L();
-  return `<header><h2>${esc(l.tSet)}</h2></header>
-  <section class="card"><div class="label">${esc(l.lang)}</div>
-   <div class="seg"><button data-act="lang" data-v="de" aria-pressed="${S.lang==="de"}">Deutsch</button><button data-act="lang" data-v="es" aria-pressed="${S.lang==="es"}">Español</button></div></section>
-  <section class="card"><label class="label" for="rate">${esc(l.rate)}: <span id="rateV">${S.rate.toFixed(2)}×</span></label>
-   <input type="range" id="rate" min="0.6" max="1.2" step="0.05" value="${S.rate}">
-   <div class="row"><button data-say="Brötchen">${esc(l.listen)}: Brötchen</button></div></section>
-  <section class="card"><div class="switch"><div><b>${esc(l.test)}</b><div class="sub" style="margin:0">${esc(l.testSub)}</div></div>
-   <button data-act="test" aria-pressed="${S.test}" style="min-width:72px">${S.test?"AN / ON":"AUS / OFF"}</button></div></section>
-  <section class="card help"><div class="label">${esc(l.help)}</div>
-   <h3>${esc(l.iph)}</h3><ol>${l.helpI.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
-   <h3>${esc(l.and)}</h3><ol>${l.helpA.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
-   <p style="margin:6px 0 0" class="sub">${esc(l.helpN)}</p></section>
-  <section class="card">${confirmReset?`<p style="margin:0"><b>${esc(l.resetQ)}</b></p><div class="row"><button class="primary" data-act="resetyes" style="background:var(--bad);border-color:var(--bad)">${esc(l.yes)}</button><button data-act="resetno">${esc(l.no)}</button></div>`
-   :`<button data-act="reset">${esc(l.reset)}</button>`}${flash?`<div class="fb ok">${esc(flash)}</div>`:""}</section>`;
-}
-
-const ICONS={levels:'<path d="M4 20h4v-6H4zM10 20h4V9h-4zM16 20h4V4h-4z"/>',stats:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/>'};
-function tabs(){const l=L(),act=view==="stats"?"stats":view==="settings"?"settings":"levels";
-  document.getElementById("tabs").innerHTML=[["levels",l.tLevels,"home"],["stats",l.tStats,"stats"],["settings",l.tSet,"settings"]]
-   .map(([k,t,v])=>`<button data-act="tab" data-v="${v}" aria-current="${act===k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${esc(t)}</button>`).join("")}
-
-function render(scrollTop){
-  if(recActive)stopRec();
-  document.documentElement.lang=S.lang;
-  app.innerHTML=view==="home"?vHome():view==="level"?vLevel():view==="exam"?vExam():view==="result"?vResult():view==="stats"?vStats():vSettings();
-  tabs();flash="";
-  const said=document.getElementById("said");if(said)said.addEventListener("input",onInput);
-  const r=document.getElementById("rate");if(r)r.addEventListener("input",()=>{S.rate=+r.value;document.getElementById("rateV").textContent=S.rate.toFixed(2)+"×";save()});
-  const oi=document.getElementById("ownIn");if(oi)oi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addOwn()}});
-  if(scrollTop)window.scrollTo(0,0);
+  ok?r.ok++:r.fail++;S.stats.tries++;if(ok)S.stats.ok++;
+  const s=S.srs[k]||{b:0,d:0};
+  if(ok){s.b=Math.min(s.b+1,GAPS.length-1);s.d=Date.now()+GAPS[s.b]*864e5}else{s.b=0;s.d=Date.now()}
+  S.srs[k]=s;
+  if(ok&&cur.kind==="daily"&&view==="set")S.dailyDone=today();
+  markDay();save();
 }
 
 /* ================= speech recognition ================= */
@@ -466,8 +435,8 @@ function startRec(){
   let r;try{r=new SR()}catch(e){toDict(l.recDenied);return}
   recog=r;r.lang="de-DE";r.interimResults=true;r.maxAlternatives=5;r.continuous=false;
   let got=false,last=null;
-  const st=()=>document.getElementById("recStatus"),bt=()=>document.getElementById("recBtn");
-  r.onstart=()=>{recActive=true;const b=bt();if(b){b.textContent=l.recOn;b.classList.add("live")}const s=st();if(s)s.textContent="";const f=document.getElementById("fb");if(f)f.hidden=true};
+  const st=()=>$("recStatus"),bt=()=>$("recBtn");
+  r.onstart=()=>{recActive=true;const b=bt();if(b){b.textContent=l.recOn;b.classList.add("live")}const s=st();if(s)s.textContent="";const f=$("fb");if(f)f.hidden=true};
   r.onresult=e=>{const res=e.results[e.results.length-1];const alts=[];for(let k=0;k<res.length;k++)alts.push(res[k].transcript);
     last=alts;const s=st();if(s)s.textContent="… "+alts[0];
     if(res.isFinal&&!got){got=true;if(s)s.textContent="";doCheck(alts)}};
@@ -481,65 +450,327 @@ function startRec(){
   try{r.start()}catch(e){toDict(l.recDenied)}
 }
 
+/* ================= self recording ================= */
+const canSelf=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+let mrec=null,myUrl=null,myKey="",mTimer=null;
+function selfUI(){const el=$("selfRow");if(!el)return;const l=L(),k=plain(curWord());
+  const has=myUrl&&myKey===k,on=mrec&&mrec.state==="recording";
+  el.innerHTML=`<button data-act="self" class="${on?"red live":""}">${esc(on?l.selfStop:"🎙 "+l.self)}</button>${has&&!on?`<button data-act="selfme">${esc(l.selfMe)}</button><button data-act="listen">${esc(l.selfOrig)}</button>`:""}`}
+async function toggleSelf(){
+  const l=L();
+  if(mrec&&mrec.state==="recording"){mrec.stop();return}
+  if(recActive)stopRec();if(hasTTS)speechSynthesis.cancel();
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast(l.selfDenied);return}
+  const types=["audio/mp4","audio/webm;codecs=opus","audio/webm"];const mt=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));
+  let r;try{r=mt?new MediaRecorder(stream,{mimeType:mt}):new MediaRecorder(stream)}catch(e){stream.getTracks().forEach(t=>t.stop());toast(l.selfDenied);return}
+  const chunks=[],k=plain(curWord());mrec=r;
+  r.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  r.onstop=()=>{clearTimeout(mTimer);stream.getTracks().forEach(t=>t.stop());
+    if(myUrl)URL.revokeObjectURL(myUrl);myUrl=URL.createObjectURL(new Blob(chunks,{type:r.mimeType||mt||"audio/webm"}));myKey=k;mrec=null;selfUI();
+    try{new Audio(myUrl).play()}catch(e){}};
+  r.start();mTimer=setTimeout(()=>{if(r.state==="recording")r.stop()},8000);selfUI();
+}
+function playMine(){if(myUrl){const a=new Audio(myUrl);a.play().catch(()=>{})}}
+
+/* ================= views ================= */
+const app=$("app");
+const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
+function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
+
+function vToday(){
+  const l=L(),dw=dailyWord(),due=dueWords().length,nx=nextLevelIdx(),st=streak();
+  const week=[];const d=new Date();const dow=(d.getDay()+6)%7;const set=new Set(S.days);
+  for(let k=0;k<7;k++){const x=new Date(d);x.setDate(d.getDate()-dow+k);week.push(`<span class="${set.has(dayKey(x))?"y":""}"><i></i>${l.days[k]}</span>`)}
+  const done=S.dailyDone===today();
+  return `${topBar()}
+  <section class="stage">
+    <div class="row between"><span class="eyebrow">${esc(l.daily)}</span>${done?`<span class="eyebrow" style="color:var(--gold)">${esc(l.dailyDone)}</span>`:""}</div>
+    <p class="word">${marked(dw.w)}</p>
+    ${dw.ipa?`<div class="ipa">[${esc(dw.ipa)}]</div>`:""}
+    <div class="row"><button class="play" data-say="${esc(plain(dw.w))}" aria-label="${esc(l.listen)}">${playIcon}</button>${wave}<span style="flex:1"></span><button class="gold" data-act="daily">${esc(l.dailyGo)}</button></div>
+    <div class="week" aria-label="${esc(l.sStreak)}: ${st}">${week.join("")}</div>
+  </section>
+  ${ttsBanner()}
+  <section class="card">
+    <div class="row between"><h3>${esc(l.review)}</h3><span class="pill" style="background:var(--bg)">${due}</span></div>
+    <p class="muted">${esc(due?l.reviewN(due):l.reviewNone)} ${esc(l.reviewSub)}</p>
+    <button class="${due?"red":""} wide" data-act="review" ${due?"":"disabled"}>${esc(l.reviewGo)}</button>
+  </section>
+  <section class="card">
+    <span class="eyebrow">${esc(l.cont)} · ${esc(l.level)} ${nx+1}</span>
+    <div class="row"><span class="node" style="width:48px;height:48px;border:0;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800">${esc(SETS[nx].chip)}</span><h3 style="flex:1;min-width:0">${esc(tx(SETS[nx].title))}</h3></div>
+    <button class="gold wide" data-act="open" data-k="level" data-i="${nx}">${esc(l.practice)}</button>
+  </section>
+  <section class="card">
+    <h3>${esc(l.quizCard)}</h3><p class="muted">${esc(l.quizCardSub)}</p>
+    <button class="wide" data-act="quiz">👂 ${esc(l.quizGo)}</button>
+  </section>`;
+}
+
+function vLevels(){
+  const l=L(),done=SETS.filter((s,i)=>isPassed(i)).length,nx=nextLevelIdx();
+  const items=SETS.map((s,i)=>{const u=unlocked(i),p=isPassed(i),b=S.best[s.id];
+    const stx=p?`★ ${b} %`:u?(b!=null?`${b} %`:""):"🔒";
+    return `<li><button class="lvl ${p?"done":""} ${u?"":"locked"} ${i===nx&&!p?"current":""}" data-act="open" data-k="level" data-i="${i}" ${u?"":'aria-disabled="true"'}>
+      <span class="node">${esc(s.chip)}</span><span style="min-width:0"><small>${esc(l.level)} ${i+1}</small><b>${esc(tx(s.title))}</b></span><span class="st">${esc(stx)}</span></button></li>`}).join("");
+  return `${topBar()}<header><h2>${esc(l.tLevels)}</h2></header>
+  <section class="card"><span class="eyebrow">${esc(l.ofLevels(done,SETS.length))}</span><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${SETS.length}" aria-valuenow="${done}"><i style="width:${Math.round(done/SETS.length*100)}%"></i></div></section>
+  ${flash?`<div class="fb warn">${esc(flash)}</div>`:""}
+  <ol class="path">${items}</ol>`;
+}
+
+function vExtras(){
+  const l=L();
+  const tile=(s,i)=>{const b=S.best[s.id];return `<button class="xt" data-act="open" data-k="extra" data-i="${i}"><span class="em">${esc(s.chip)}</span><b>${esc(tx(s.title))}</b><small>${esc(l.nWords(s.words.length))}${b!=null?" · ★ "+b+" %":""}</small></button>`};
+  const sit=EXTRAS.map((s,i)=>s.group==="sit"?tile(s,i):"").join(""),fun=EXTRAS.map((s,i)=>s.group==="fun"?tile(s,i):"").join("");
+  return `${topBar()}<header><h2>${esc(l.tExtras)}</h2></header>
+  <section class="stage"><h3 style="color:var(--gold)">👂 ${esc(l.quizCard)}</h3><p style="color:var(--stage-muted)">${esc(l.quizCardSub)}</p><button class="gold wide" data-act="quiz">${esc(l.quizGo)}</button></section>
+  <span class="eyebrow">${esc(l.xSit)}</span><div class="tilegrid">${sit}</div>
+  <span class="eyebrow">${esc(l.xFun)}</span><div class="tilegrid">${fun}
+   <button class="xt" data-act="open" data-k="own"><span class="em">✍️</span><b>${esc(l.own)}</b><small>${esc(l.nOwn(S.custom.length))}</small></button></div>`;
+}
+
+function speakBlock(){const l=L();
+  if(micMode==="sr")return `<span class="eyebrow">${esc(l.yourTurn)}</span>
+   <button class="red big wide" data-act="rec" id="recBtn">${esc(l.recStart)}</button>
+   <p class="status" id="recStatus">${esc(l.recHint)}</p>
+   <div id="fb" class="fb" hidden></div>
+   <button class="ghost" data-act="usedict" style="align-self:flex-start">${esc(l.useDict)}</button>`;
+  return `<span class="eyebrow">${esc(l.yourTurn)}</span>${micNote?`<div class="fb warn">${esc(micNote)}</div>`:""}
+   <button class="red big wide" data-act="kb">${esc(l.kbOpen)}</button>
+   <ol class="steps">${l.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+   <input type="text" id="said" lang="de" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${esc(l.ph)}">
+   <div class="row"><button data-act="check">${esc(l.check)}</button><button data-act="clear">${esc(l.again)}</button></div>
+   <div id="fb" class="fb" hidden></div>${SR?`<button class="ghost" data-act="userec" style="align-self:flex-start">${esc(l.useRec)}</button>`:""}`}
+
+function stageWord(w,label){
+  const l=L(),p=plain(w.w),isS=p.includes(" ");
+  return `<div class="row between"><span class="eyebrow">${label}</span>${wave}</div>
+   <p class="word ${isS?"sentence":""}">${marked(w.w)}</p>
+   ${w.ipa?`<div class="ipa">[${esc(w.ipa)}]</div>`:""}
+   ${w.note?`<div class="note">${esc(tx(w.note))}</div>`:""}
+   <div class="row"><button class="gold" data-act="listen">▶ ${esc(l.listen)}</button><button data-act="slow">🐢 ${esc(l.slow)}</button></div>`}
+
+function vSet(){
+  const l=L(),s=getSet(),k=cur.kind,own=k==="own",testable=k==="level"||k==="extra";
+  const backTo=k==="level"?"levels":k==="today"||k==="daily"||k==="review"?"today":"extras";
+  let card="";
+  if(s.words.length){if(wi>=s.words.length)wi=0;const w=s.words[wi],p=plain(w.w);
+    card=`<section class="stage" aria-live="polite">${stageWord(w,`${esc(l.practice)} · ${wi+1}/${s.words.length}`)}
+     ${canSelf?`<div class="row" id="selfRow"></div>`:""}
+     ${speakBlock()}
+     ${s.words.length>1?`<div class="row between"><button data-act="prev">${esc(l.prev)}</button><button data-act="next">${esc(l.next)}</button></div>`:""}
+     ${p.includes(" ")?"":`<a class="native" href="https://de.wiktionary.org/wiki/${encodeURIComponent(p)}" target="_blank" rel="noopener">${esc(l.native)}</a>`}
+    </section>`}
+  const list=s.words.map((w,i)=>{const r=S.words[plain(w.w)];
+    return `<li><button class="w" data-act="pick" data-i="${i}" aria-current="${i===wi}">${marked(w.w)}</button><span class="cnt">${r&&r.ok?"✓ "+r.ok:""}</span>
+     <button class="play" data-say="${esc(plain(w.w))}" aria-label="${esc(l.listen)} ${esc(plain(w.w))}">${playIcon}</button>
+     ${own?`<button class="ghost" data-act="del" data-i="${i}">${esc(l.del)}</button>`:""}</li>`}).join("");
+  const pairs=s.pairs?`<span class="eyebrow">${esc(l.pairs)}</span>`+s.pairs.map(p=>`<div class="pair"><button data-say="${esc(p[0])}">${esc(p[0])}</button><span>vs</span><button data-say="${esc(p[1])}">${esc(p[1])}</button></div>`).join("")+`<button class="wide" data-act="quizset">👂 ${esc(l.quizThis)}</button>`:"";
+  return `<div class="row"><button class="ghost" data-act="tab" data-v="${backTo}">${esc(l.back)}</button></div>
+  <header class="row" style="gap:14px;flex-wrap:nowrap"><span class="node" style="width:52px;height:52px;min-width:52px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:var(--gold-ink);font-family:var(--display);font-weight:800">${esc(s.chip)}</span>
+   <div style="min-width:0">${k==="level"?`<span class="eyebrow">${esc(l.level)} ${cur.i+1}</span>`:""}<h2>${esc(tx(s.title))}</h2></div></header>
+  ${s.tip?`<p>${esc(tx(s.tip))}</p>`:""}
+  ${ttsBanner()}
+  ${own?`<section class="card"><label class="eyebrow" for="ownIn">${esc(l.ownSub)}</label><input type="text" id="ownIn" lang="de" placeholder="${esc(l.addPh)}" autocomplete="off"><button class="gold" data-act="add">${esc(l.add)}</button></section>`:""}
+  ${card||(own?`<p class="muted">${esc(l.ownNone)}</p>`:"")}
+  ${testable?`<section class="card"><h3>${esc(k==="level"?l.exam:l.test)}</h3><p class="muted">${esc(k==="level"?l.examInfo:l.testInfo)}</p>
+    ${S.best[s.id]!=null?`<span class="eyebrow">${esc(l.best)}: ${S.best[s.id]} %</span>`:""}
+    <button class="gold wide" data-act="exam">${esc(k==="level"?l.startExam:l.startTest)}</button></section>`:""}
+  ${s.words.length>1||pairs?`<section class="card"><span class="eyebrow">${esc(l.words)}</span><ul class="list">${list}</ul>${pairs}</section>`:""}`;
+}
+
+function examTitle(){const l=L();return exam.kind==="level"?l.exam:exam.kind==="review"?l.reviewT:l.testT}
+function vExam(){
+  const l=L(),s=exam.set,w=s.words[exam.order[exam.i]];
+  const dots=exam.order.map((_,k)=>`<i class="${exam.res[k]===true?"y":exam.res[k]===false?"n":""} ${k===exam.i?"c":""}"></i>`).join("");
+  return `<div class="row"><button class="ghost" data-act="examquit">${esc(l.back)}</button></div>
+  <header><span class="eyebrow">${esc(examTitle())}</span><h2>${esc(tx(s.title))}</h2></header>
+  ${ttsBanner()}
+  <section class="stage" aria-live="polite">
+   <div class="row between"><span class="eyebrow">${esc(l.itemOf(exam.i+1,exam.order.length))}</span><span class="eyebrow">${esc(l.attempt(exam.tries+1))}</span></div>
+   <div class="dots">${dots}</div>
+   ${stageWord(w,"")}
+   ${speakBlock()}
+   <div class="row" id="examCtl"><button data-act="eskip">${esc(l.skip)}</button></div>
+  </section>`;
+}
+
+function vResult(){
+  const l=L(),s=exam.set,n=exam.res.filter(x=>x).length,pct=Math.round(n/exam.order.length*100),lvlKind=exam.kind==="level",ok=pct>=PASS;
+  const nx=lvlKind?SETS[exam.i0+1]:null;
+  const msg=lvlKind?(ok?l.pass(nx?tx(nx.title):""):l.fail):l.doneTest;
+  const rows=exam.order.map((idx,k)=>`<li><span style="flex:1;padding:12px 2px;min-width:0">${exam.res[k]?"✅":"❌"} ${marked(s.words[idx].w)}</span><button class="play" data-say="${esc(plain(s.words[idx].w))}" aria-label="${esc(l.listen)}">${playIcon}</button></li>`).join("");
+  const home=exam.kind==="level"?"levels":exam.kind==="review"?"today":"extras";
+  return `<header><span class="eyebrow">${esc(l.result)} · ${esc(examTitle())}</span><h2>${esc(tx(s.title))}</h2></header>
+  <section class="stage"><div class="big" style="color:${lvlKind&&!ok?"var(--red)":"var(--gold)"}">${pct} %</div><p style="color:var(--stage-muted)">${esc(l.correctOf(n,exam.order.length))}</p>
+   <div class="fb ${lvlKind?(ok?"ok":"bad"):"ok"}">${esc(msg)}</div>
+   <div class="row">${lvlKind&&ok&&nx?`<button class="gold" data-act="open" data-k="level" data-i="${exam.i0+1}">${esc(l.nextLevel)}</button>`:""}
+    ${exam.kind!=="review"?`<button ${lvlKind&&!ok?'class="gold"':""} data-act="exam">${esc(l.retryExam)}</button>`:""}
+    ${(ok||!lvlKind)&&exam.kind!=="review"?`<button data-act="sharelevel" data-p="${pct}">📤 ${esc(l.share)}</button>`:""}
+    <button data-act="tab" data-v="${home}">${esc(l.toHome)}</button></div></section>
+  <section class="card"><ul class="list">${rows}</ul></section>`;
+}
+
+function vQuiz(){
+  const l=L(),q=quiz.items[quiz.q];
+  const opts=q.pair.map(w=>{let c="";if(q.ans!=null){if(w===q.target)c="right";else if(w===q.ans)c="wrong"}
+    return `<button class="opt ${c}" data-act="qans" data-w="${esc(w)}" ${q.ans!=null?"disabled":""}>${esc(w)}</button>`}).join("");
+  const dots=quiz.items.map((it,k)=>`<i class="${it.ans==null?"":it.ans===it.target?"y":"n"} ${k===quiz.q?"c":""}"></i>`).join("");
+  return `<div class="row"><button class="ghost" data-act="tab" data-v="${quiz.back}">${esc(l.back)}</button></div>
+  <header><span class="eyebrow">${esc(l.quiz)}${quiz.label?" · "+esc(quiz.label):""}</span><h2>${esc(l.quizQ)}</h2></header>
+  ${ttsBanner()}
+  <section class="stage" aria-live="polite">
+   <div class="row between"><span class="eyebrow">${esc(l.itemOf(quiz.q+1,quiz.items.length))}</span>${wave}</div>
+   <div class="dots">${dots}</div>
+   <button class="gold big wide" data-act="qplay">🔊 ${esc(l.quizReplay)}</button>
+   <div class="opts">${opts}</div>
+   ${q.ans!=null?`<div class="fb ${q.ans===q.target?"ok":"bad"}">${esc(q.ans===q.target?l.quizRight:l.quizWrong(q.target))}</div>
+    <button class="wide" data-act="qnext">${esc(quiz.q+1<quiz.items.length?l.quizNext:l.quizEnd)}</button>`:""}
+  </section>`;
+}
+function vQuizResult(){
+  const l=L(),n=quiz.items.filter(it=>it.ans===it.target).length;
+  const rows=quiz.items.map(it=>`<li><span style="flex:1;padding:12px 2px">${it.ans===it.target?"✅":"❌"} <b>${esc(it.target)}</b> <span class="muted">vs ${esc(it.pair.find(x=>x!==it.target))}</span></span><button class="play" data-say="${esc(it.target)}" aria-label="${esc(l.listen)}">${playIcon}</button></li>`).join("");
+  return `<header><span class="eyebrow">${esc(l.result)} · ${esc(l.quiz)}</span><h2>${esc(l.quizScore(n,quiz.items.length))}</h2></header>
+  <section class="stage"><div class="big" style="color:var(--gold)">${Math.round(n/quiz.items.length*100)} %</div>
+   <div class="row"><button class="gold" data-act="${quiz.setId?"quizset":"quiz"}">${esc(l.quizAgain)}</button><button data-act="sharequiz" data-n="${n}">📤 ${esc(l.share)}</button><button data-act="tab" data-v="${quiz.back}">${esc(l.toHome)}</button></div></section>
+  <section class="card"><ul class="list">${rows}</ul></section>`;
+}
+
+function vStats(){
+  const l=L(),st=S.stats,h=Math.floor(st.secs/3600),m=Math.floor(st.secs%3600/60);
+  const practiced=Object.keys(S.words).length,rate=st.tries?Math.round(st.ok/st.tries*100):0,qr=st.quiz?Math.round(st.quizOk/st.quiz*100):0;
+  const exams=SETS.filter((s,i)=>isPassed(i)).length;
+  const hard=Object.entries(S.words).filter(([k,r])=>r.fail>r.ok).sort((a,b)=>(b[1].fail-b[1].ok)-(a[1].fail-a[1].ok)).slice(0,12);
+  const tile=(v,k,c)=>`<div class="tile ${c||""}"><div class="v">${esc(v)}</div><div class="k">${esc(k)}</div></div>`;
+  const lv=ALLSETS.filter(s=>S.best[s.id]!=null).map(s=>{const b=S.best[s.id];return `<li style="display:grid;grid-template-columns:1fr 80px 48px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)"><span style="min-width:0">${esc(s.chip)} ${esc(tx(s.title))}</span>
+    <span class="bar"><i style="width:${b}%;${b<PASS?"background:var(--red)":""}"></i></span><span class="cnt" style="color:var(--muted);text-align:right">${b} %</span></li>`}).join("");
+  return `${topBar()}<header><h2>${esc(l.tStats)}</h2></header>
+  <div class="tiles">${tile(l.hm(h,m),l.sTime,"hero")}${tile(streak(),l.sStreak)}${tile(exams+" / "+SETS.length,l.sExams)}${tile(practiced,l.sWords)}${tile(rate+" %",l.sRate)}${tile(st.quiz?qr+" %":"–",l.sQuiz)}${tile(dueWords().length,l.sDue)}</div>
+  <button class="gold wide" data-act="sharestats">📤 ${esc(l.shareProg)}</button>
+  <section class="card"><h3>${esc(l.sHard)}</h3>
+   ${hard.length?`<ul class="list">${hard.map(([k,r])=>`<li><span style="flex:1;padding:10px 2px">${esc(k)}</span><span class="cnt" style="color:var(--bad)">✗ ${r.fail} · ✓ ${r.ok}</span><button class="play" data-say="${esc(k)}" aria-label="${esc(l.listen)} ${esc(k)}">${playIcon}</button></li>`).join("")}</ul>`:`<p class="muted">${esc(l.sHardNone)}</p>`}</section>
+  ${lv?`<section class="card"><h3>${esc(l.sLevels)}</h3><ul style="list-style:none;margin:0;padding:0">${lv}</ul></section>`:""}
+  <p class="muted" style="font-size:.9rem">${esc(l.sSaved)}</p>`;
+}
+
+function vSettings(){
+  const l=L();
+  return `${topBar()}<header><h2>${esc(l.tSet)}</h2></header>
+  <section class="card"><span class="eyebrow">${esc(l.lang)}</span>
+   <div class="seg"><button data-act="lang" data-v="de" aria-pressed="${S.lang==="de"}">🇩🇪 Deutsch</button><button data-act="lang" data-v="es" aria-pressed="${S.lang==="es"}">🇪🇸 Español</button></div></section>
+  <section class="card"><label class="eyebrow" for="rate">${esc(l.rate)}: <span id="rateV">${S.rate.toFixed(2)}×</span></label>
+   <input type="range" id="rate" min="0.6" max="1.2" step="0.05" value="${S.rate}">
+   <div class="row"><button data-say="Brötchen">▶ Brötchen</button>${wave}</div></section>
+  <section class="card"><div class="row between" style="flex-wrap:nowrap"><div style="min-width:0"><h3>${esc(l.testMode)}</h3><p class="muted" style="font-size:.9rem">${esc(l.testSub)}</p></div>
+   <button data-act="test" aria-pressed="${S.test}" class="${S.test?"gold":""}" style="min-width:64px">${esc(S.test?l.on:l.off)}</button></div></section>
+  <section class="card help"><h3>${esc(l.help)}</h3><p class="muted">${esc(l.helpMic)}</p>
+   <h3>${esc(l.iph)}</h3><ol>${l.helpI.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+   <h3>${esc(l.and)}</h3><ol>${l.helpA.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+   <p class="muted" style="font-size:.9rem">${esc(l.helpN)}</p></section>
+  <section class="card">${confirmReset?`<p><b>${esc(l.resetQ)}</b></p><div class="row"><button class="red" data-act="resetyes">${esc(l.yes)}</button><button data-act="resetno">${esc(l.no)}</button></div>`
+   :`<button data-act="reset">${esc(l.reset)}</button>`}${flash?`<div class="fb ok">${esc(flash)}</div>`:""}</section>`;
+}
+
+const ICONS={today:'<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>',levels:'<path d="M4 20h4v-6H4zM10 20h4V9h-4zM16 20h4V4h-4z"/>',extras:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',stats:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/>'};
+function tabOf(){if(["today","levels","extras","stats","settings"].includes(view))return view;
+  if(view==="set")return cur.kind==="level"?"levels":cur.kind==="daily"||cur.kind==="review"?"today":"extras";
+  if(view==="exam"||view==="result")return exam.kind==="level"?"levels":exam.kind==="review"?"today":"extras";
+  if(view==="quiz"||view==="quizres")return quiz.back;return "today"}
+function tabs(){const l=L(),act=tabOf();
+  $("tabs").innerHTML=[["today",l.tToday],["levels",l.tLevels],["extras",l.tExtras],["stats",l.tStats],["settings",l.tSet]]
+   .map(([k,t])=>`<button data-act="tab" data-v="${k}" aria-current="${act===k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>${esc(t)}</button>`).join("")}
+
+function render(scrollTop){
+  if(recActive)stopRec();
+  document.documentElement.lang=S.lang;
+  const V={today:vToday,levels:vLevels,extras:vExtras,set:vSet,exam:vExam,result:vResult,quiz:vQuiz,quizres:vQuizResult,stats:vStats,settings:vSettings};
+  app.innerHTML=(V[view]||vToday)();
+  tabs();flash="";
+  const said=$("said");if(said)said.addEventListener("input",onInput);
+  const r=$("rate");if(r)r.addEventListener("input",()=>{S.rate=+r.value;$("rateV").textContent=S.rate.toFixed(2)+"×";save()});
+  const oi=$("ownIn");if(oi)oi.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addOwn()}});
+  selfUI();
+  if(scrollTop)window.scrollTo(0,0);
+}
+
 /* ================= actions ================= */
 let autoT=null,lastChecked="";
-function onInput(){clearTimeout(autoT);lastChecked="";const v=document.getElementById("said").value.trim();if(v)autoT=setTimeout(doCheck,1500)}
-function showFb(r){const fb=document.getElementById("fb");fb.hidden=false;fb.className="fb "+r.cls;fb.innerHTML=r.html}
-function curWord(){if(view==="exam"){const s=SETS[exam.lvl];return s.words[exam.order[exam.i]].w}const s=currentSet();return s.words[wi]?s.words[wi].w:""}
+function onInput(){clearTimeout(autoT);lastChecked="";const v=$("said").value.trim();if(v)autoT=setTimeout(doCheck,1500)}
+function showFb(r){const fb=$("fb");if(!fb)return;fb.hidden=false;fb.className="fb "+r.cls;fb.innerHTML=r.html}
+function curWord(){if(view==="exam"){return exam.set.words[exam.order[exam.i]].w}const s=getSet();return s&&s.words[wi]?s.words[wi].w:""}
 function doCheck(alts){
   clearTimeout(autoT);
-  if(!Array.isArray(alts)){const inp=document.getElementById("said");if(!inp)return;
-    const v=inp.value;if(v.trim()&&v===lastChecked)return;lastChecked=v;alts=[v]}
+  if(!Array.isArray(alts)){const inp=$("said");if(!inp)return;const v=inp.value;if(v.trim()&&v===lastChecked)return;lastChecked=v;alts=[v]}
   if(view==="exam"&&exam.res[exam.i]!==undefined)return;
-  const target=curWord();let r=null;
+  const target=curWord();if(!target)return;let r=null;
   for(const a of alts){const x=evaluate(plain(target),a);if(x.ok){r=x;break}if(!r)r=x}
-  showFb(r);
-  if(r.empty)return;
-  if(view!=="exam"){record(target,r.ok);if(r.ok){const c=document.querySelectorAll(".list .cnt")[wi];const rec=S.words[plain(target)];if(c)c.textContent="✓ "+rec.ok}return}
-  if(exam.res[exam.i]!==undefined)return;
+  showFb(r);if(r.empty)return;
   record(target,r.ok);
-  const ctl=document.getElementById("examCtl"),l=L();
+  if(view!=="exam"){if(r.ok){const c=document.querySelectorAll(".list .cnt")[wi];const rec=S.words[plain(target)];if(c)c.textContent="✓ "+rec.ok}return}
+  const ctl=$("examCtl"),l=L();
   if(r.ok){exam.res[exam.i]=true;ctl.innerHTML="";setTimeout(examNext,1200);return}
   exam.tries++;
-  if(exam.tries<2){ctl.innerHTML=`<button class="primary" data-act="eretry">${esc(l.retryWord)}</button><button data-act="eskip">${esc(l.skip)}</button>`}
-  else{exam.res[exam.i]=false;ctl.innerHTML=`<button class="primary" data-act="enext">${esc(l.cont2)}</button>`}
+  if(exam.tries<2){ctl.innerHTML=`<button class="gold" data-act="eretry">${esc(l.retryWord)}</button><button data-act="eskip">${esc(l.skip)}</button>`}
+  else{exam.res[exam.i]=false;ctl.innerHTML=`<button class="gold" data-act="enext">${esc(l.cont2)}</button>`}
 }
 function examNext(){if(view!=="exam")return;exam.i++;exam.tries=0;
-  if(exam.i>=exam.order.length){const n=exam.res.filter(x=>x).length,pct=Math.round(n/exam.order.length*100),id=SETS[exam.lvl].id;
-    if(S.best[id]==null||pct>S.best[id])S.best[id]=pct;markDay();save();view="result"}
+  if(exam.i>=exam.order.length){const n=exam.res.filter(x=>x).length,pct=Math.round(n/exam.order.length*100),id=exam.set.id;
+    if(exam.kind==="level"||exam.kind==="extra"){if(S.best[id]==null||pct>S.best[id])S.best[id]=pct}
+    markDay();save();view="result"}
   render(true)}
-function startExam(i){const s=SETS[i];const order=s.words.map((_,k)=>k);
-  for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]]}
-  exam={lvl:i,order,i:0,tries:0,res:[]};view="exam";render(true)}
-function addOwn(){const oi=document.getElementById("ownIn");const v=(oi.value||"").trim().replace(/[\[\]<>]/g,"");if(!v)return;
-  if(!S.custom.includes(v))S.custom.push(v);save();wi=S.custom.indexOf(v);render(false);setTimeout(()=>{const n=document.getElementById("ownIn");if(n)n.focus()},0)}
+function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function startExam(kind,i){
+  const c={kind,i},set=getSet(c);if(!set||!set.words.length)return;
+  exam={kind,i0:i,set,order:shuffle(set.words.map((_,k)=>k)),i:0,tries:0,res:[]};view="exam";render(true)}
+function startQuiz(setOnly){
+  const src=setOnly?[getSet()]:ALLSETS;const pairs=src.flatMap(s=>s.pairs||[]);if(!pairs.length)return;
+  const items=[];const pool=shuffle(pairs.slice());
+  for(let k=0;k<10;k++){const p=pool[k%pool.length];items.push({pair:Math.random()<.5?[p[0],p[1]]:[p[1],p[0]],target:p[Math.random()<.5?0:1],ans:null})}
+  quiz={items,q:0,back:view==="set"?(cur.kind==="level"?"levels":"extras"):(view==="today"||view==="quizres"&&quiz&&quiz.back==="today")?"today":"extras",
+    label:setOnly?tx(getSet().title):"",setId:setOnly?getSet().id:null};
+  view="quiz";render(true);setTimeout(()=>speak(items[0].target,false),60)}
+function addOwn(){const oi=$("ownIn");const v=(oi.value||"").trim().replace(/[\[\]<>]/g,"");if(!v)return;
+  if(!S.custom.includes(v))S.custom.push(v);save();wi=S.custom.indexOf(v);render(false);setTimeout(()=>{const n=$("ownIn");if(n)n.focus()},0)}
+function openSet(kind,i){cur={kind,i};wi=0;view="set";render(true)}
 
 document.addEventListener("click",e=>{
   const say=e.target.closest("[data-say]");if(say){speak(say.dataset.say,false);return}
-  const b=e.target.closest("[data-act]");if(!b)return;
+  const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
   const a=b.dataset.act,l=L();
   switch(a){
    case"tab":view=b.dataset.v;confirmReset=false;if(hasTTS)speechSynthesis.cancel();render(true);break;
-   case"home":view="home";render(true);break;
-   case"open":{const i=+b.dataset.i;if(!unlocked(i)){flash=l.lockedMsg;render(false);break}lvl=i;wi=0;view="level";render(true);break}
-   case"own":lvl=-1;wi=0;view="level";render(true);break;
-   case"levelback":view="level";render(true);break;
+   case"open":{const k=b.dataset.k||"level",i=+(b.dataset.i||0);if(k==="level"&&!unlocked(i)){flash=l.lockedMsg;view="levels";render(false);break}openSet(k,i);break}
+   case"daily":openSet("daily",0);break;
+   case"review":reviewList=dueWords().slice(0,10);if(reviewList.length){cur={kind:"review",i:0};startExam("review",0)}break;
    case"listen":speak(plain(curWord()),false);break;
    case"slow":speak(plain(curWord()),true);break;
-   case"speak":case"clear":{const i=document.getElementById("said");i.value="";lastChecked="";document.getElementById("fb").hidden=true;i.focus();break}
-   case"check":doCheck();break;
    case"rec":startRec();break;
+   case"kb":case"clear":{const i=$("said");if(!i)break;i.value="";lastChecked="";const f=$("fb");if(f)f.hidden=true;i.focus();break}
+   case"check":doCheck();break;
    case"usedict":stopRec();micMode="dict";micNote="";render(false);break;
    case"userec":micMode="sr";micNote="";render(false);break;
-   case"prev":{const n=currentSet().words.length;wi=(wi-1+n)%n;render(false);break}
-   case"next":{const n=currentSet().words.length;wi=(wi+1)%n;render(false);break}
+   case"self":toggleSelf();break;
+   case"selfme":playMine();break;
+   case"prev":{const n=getSet().words.length;wi=(wi-1+n)%n;render(false);break}
+   case"next":{const n=getSet().words.length;wi=(wi+1)%n;render(false);break}
    case"pick":wi=+b.dataset.i;render(false);window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});break;
    case"del":S.custom.splice(+b.dataset.i,1);wi=0;save();render(false);break;
    case"add":addOwn();break;
-   case"exam":startExam(view==="result"?exam.lvl:lvl);break;
-   case"eskip":exam.res[exam.i]=false;record(curWord(),false);examNext();break;
+   case"exam":if(view==="result")startExam(exam.kind,exam.i0);else startExam(cur.kind,cur.i);break;
+   case"examquit":view=exam.kind==="review"?"today":"set";if(exam.kind!=="review")cur={kind:exam.kind,i:exam.i0};render(true);break;
+   case"eskip":if(exam.res[exam.i]===undefined){exam.res[exam.i]=false;record(curWord(),false)}examNext();break;
    case"enext":examNext();break;
    case"eretry":lastChecked="";render(false);break;
+   case"quiz":startQuiz(false);break;
+   case"quizset":if(view==="quizres"&&quiz.setId){const k=ALLSETS.findIndex(s=>s.id===quiz.setId);cur=k<SETS.length?{kind:"level",i:k}:{kind:"extra",i:k-SETS.length}}startQuiz(true);break;
+   case"qplay":speak(quiz.items[quiz.q].target,false);break;
+   case"qans":{const it=quiz.items[quiz.q];if(it.ans!=null)break;it.ans=b.dataset.w;S.stats.quiz++;if(it.ans===it.target)S.stats.quizOk++;markDay();save();render(false);break}
+   case"qnext":if(quiz.q+1<quiz.items.length){quiz.q++;render(false);speak(quiz.items[quiz.q].target,false)}else{view="quizres";render(true)}break;
+   case"sharelevel":share(l.shareLevel(tx(exam.set.title),b.dataset.p));break;
+   case"sharequiz":share(l.shareLevel(l.quiz,Math.round(+b.dataset.n/quiz.items.length*100)));break;
+   case"sharestats":share(l.shareStats(streak(),SETS.filter((s,i)=>isPassed(i)).length));break;
    case"lang":S.lang=b.dataset.v;save();render(false);break;
    case"test":S.test=!S.test;save();render(false);break;
    case"reset":confirmReset=true;render(false);break;
@@ -549,11 +780,12 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="said"){e.preventDefault();doCheck()}});
 
-/* ================= study-time tracking ================= */
+/* ================= study time ================= */
 let lastAct=Date.now();
 ["pointerdown","keydown","input"].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},true));
 setInterval(()=>{if(!document.hidden&&Date.now()-lastAct<90000){S.stats.secs+=5;save()}},5000);
 
 render(true);
+
 </script>
 </body></html>
