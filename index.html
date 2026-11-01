@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Oye Deutsch – entrena la pronunciación alemana / Deutsch-Aussprache üben"><meta name="theme-color" content="#15120E"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Oye Deutsch</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Oye Deutsch – entrena la pronunciación alemana / Deutsch-Aussprache üben"><meta name="theme-color" content="#15120E"><meta name="referrer" content="no-referrer"><meta http-equiv="Cache-Control" content="no-cache"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Oye Deutsch</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -408,14 +408,16 @@ function waveOn(on){document.querySelectorAll(".wave").forEach(w=>w.classList.to
    (works with the silent switch on and inside in-app browsers). */
 const isIOSdev=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 function useOnline(){return S.voiceMode==="online"||(S.voiceMode==="auto"&&(isIOSdev||!hasTTS))}
-let curAudio=null;
+let curAudio=null,diag="";
+function setDiag(m){diag=m;const d=document.getElementById("diag");if(d)d.textContent=m}
 function speakOnline(text,slow){
   if(curAudio){try{curAudio.pause()}catch(e){}}
   const url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&ttsspeed="+(slow?"0.3":"1")+"&q="+encodeURIComponent(text.slice(0,190));
   const a=new Audio(url);a.setAttribute("playsinline","");a.preload="auto";curAudio=a;
-  a.onplaying=()=>{ttsWarn(false);waveOn(true)};a.onended=()=>waveOn(false);a.onpause=()=>waveOn(false);
-  a.onerror=()=>{waveOn(false);if(hasTTS&&S.voiceMode!=="online")speakDevice(text,slow);else ttsWarn(true)};
-  const p=a.play();if(p&&p.catch)p.catch(err=>{if(err&&err.name==="NotAllowedError")ttsWarn(true)});
+  a.referrerPolicy="no-referrer";
+  a.onplaying=()=>{ttsWarn(false);waveOn(true);setDiag("OK: online")};a.onended=()=>waveOn(false);a.onpause=()=>waveOn(false);
+  a.onerror=()=>{waveOn(false);setDiag("Online-Fehler: "+(a.error?a.error.code+" "+(a.error.message||""):"?"));if(hasTTS&&S.voiceMode!=="online")speakDevice(text,slow);else ttsWarn(true)};
+  const p=a.play();if(p&&p.catch)p.catch(err=>{setDiag("Online play(): "+(err&&err.name)+" "+(err&&err.message||""));if(err&&err.name==="NotAllowedError")ttsWarn(true)});
 }
 function speak(text,slow){
   S.stats.listens++;markDay();save();
@@ -428,11 +430,11 @@ function speakDevice(text,slow){
   const go=()=>{let started=false;
     const u=new SpeechSynthesisUtterance(text);u.lang="de-DE";if(voice)u.voice=voice;
     u.rate=slow?Math.max(.35,S.rate*.55):S.rate;u.pitch=1;u.volume=1;
-    u.onstart=()=>{started=true;ttsWarn(false);waveOn(true)};u.onend=()=>waveOn(false);
-    u.onerror=()=>{waveOn(false);if(!started)ttsWarn(true)};
+    u.onstart=()=>{started=true;ttsWarn(false);waveOn(true);setDiag("OK: Handy-Stimme "+(voice?voice.name:"Standard"))};u.onend=()=>waveOn(false);
+    u.onerror=ev=>{waveOn(false);setDiag("Handy-Stimme Fehler: "+(ev&&ev.error));if(!started)ttsWarn(true)};
     try{speechSynthesis.resume()}catch(e){}
     speechSynthesis.speak(u);
-    setTimeout(()=>{if(!started&&!speechSynthesis.speaking)ttsWarn(true)},2500)};
+    setTimeout(()=>{if(!started&&!speechSynthesis.speaking){ttsWarn(true);if(!diag.startsWith("Handy"))setDiag("Handy-Stimme startet nicht ("+speechSynthesis.getVoices().length+" Stimmen)")}},2500)};
   if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,150)}else go();
 }
 
@@ -521,7 +523,7 @@ const F_NAME="entry.477745371",F_TEXT="entry.1994519768",F_INFO="entry.175975155
 let fbStars=0,fbState="",fbFrom="today";
 function device(){const u=navigator.userAgent;return /iPhone|iPad|iPod/.test(u)?"iPhone":/Android/.test(u)?"Android":/Mac/.test(u)?"Mac":/Windows/.test(u)?"Windows":"Andere"}
 function fbInfo(){const done=SETS.filter((s,i)=>isPassed(i)).length;
-  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Stimme-Modus: ${S.voiceMode}/${useOnline()?"online":"device"} | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
+  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Diagnose: ${diag||"-"} | Stimme-Modus: ${S.voiceMode}/${useOnline()?"online":"device"} | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
 async function sendFeedback(){
   const l=L(),text=($("fbTxt").value||"").trim(),name=($("fbNm").value||"").trim();
   if(!text&&!fbStars){fbState="empty";paintFb();return}
@@ -556,6 +558,7 @@ function vFeedback(){const l=L();
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
+const APPV="v7";
 function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
 
 function vToday(){
@@ -744,6 +747,8 @@ function vSettings(){
    <span class="eyebrow">${esc(l.vmT)}</span>
    <div class="seg">${[["auto",l.vmAuto],["online",l.vmOnline],["device",l.vmDevice]].map(([k,t])=>`<button data-act="vmode" data-v="${k}" aria-pressed="${S.voiceMode===k}">${esc(t)}</button>`).join("")}</div>
    <p class="muted" style="font-size:.85rem">${esc(l.vmSub)}</p>
+   <p class="muted" style="font-size:.8rem">App ${APPV} · ${isIOSdev?"iPhone":"kein iPhone"} · ${hasTTS?speechSynthesis.getVoices().length+" Handy-Stimmen":"keine Handy-Stimme"}</p>
+   <p class="muted" style="font-size:.85rem;font-family:ui-monospace,monospace" id="diag">${esc(diag||"–")}</p>
    <p class="muted" style="font-size:.85rem">${useOnline()?"🌐 "+esc(l.vmOnline):voice?"✓ "+esc(l.sndOk)+": "+esc(voice.name):"⚠️ "+esc(l.sndNo)}</p>
    <ol style="margin:0;padding-left:20px;font-size:.92rem">${l.sndHelp.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
   ${ttsBanner()}
