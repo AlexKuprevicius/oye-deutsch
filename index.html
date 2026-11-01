@@ -475,26 +475,37 @@ const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="M
 let micMode=SR?"sr":"dict",micNote="",recog=null,recActive=false;
 function stopRec(){if(recog){try{recog.abort()}catch(e){}}recActive=false;recog=null}
 function toDict(note){stopRec();micMode="dict";micNote=note;render(false)}
+let recFails=0;
 function startRec(){
   const l=L();
   if(recActive){try{recog.stop()}catch(e){}return}
   if(hasTTS)speechSynthesis.cancel();
+  if(typeof curAudio!=="undefined"&&curAudio){try{curAudio.pause()}catch(e){}}
+  if(mrec&&mrec.state==="recording"){try{mrec.stop()}catch(e){}}
   let r;try{r=new SR()}catch(e){toDict(l.recDenied);return}
-  recog=r;r.lang="de-DE";r.interimResults=true;r.maxAlternatives=5;r.continuous=false;
-  let got=false,last=null;
+  /* iOS Safari often ends a non-continuous session before any result arrives.
+     There we keep it open and stop it ourselves after a short pause in speech. */
+  recog=r;r.lang="de-DE";r.interimResults=true;r.maxAlternatives=5;r.continuous=isIOS;
+  let got=false,last=null,errCode="",silence=null;
+  const maxT=setTimeout(()=>{try{r.stop()}catch(e){}},isIOS?7000:9000);
   const st=()=>$("recStatus"),bt=()=>$("recBtn");
+  const finish=alts=>{if(got)return;got=true;clearTimeout(silence);clearTimeout(maxT);recFails=0;const s=st();if(s)s.textContent="";doCheck(alts);try{r.stop()}catch(e){}};
   r.onstart=()=>{recActive=true;const b=bt();if(b){b.textContent=l.recOn;b.classList.add("live")}const s=st();if(s)s.textContent="";const f=$("fb");if(f)f.hidden=true};
-  r.onresult=e=>{const res=e.results[e.results.length-1];const alts=[];for(let k=0;k<res.length;k++)alts.push(res[k].transcript);
+  r.onresult=e=>{
+    const rs=Array.from(e.results),head=rs.slice(0,-1).map(x=>x[0].transcript).join(" ").trim(),lr=rs[rs.length-1];
+    const alts=[];for(let k=0;k<lr.length;k++)alts.push((head+" "+lr[k].transcript).trim());
     last=alts;const s=st();if(s)s.textContent="… "+alts[0];
-    if(res.isFinal&&!got){got=true;if(s)s.textContent="";doCheck(alts)}};
-  r.onerror=e=>{const c=e.error;
+    if(!isIOS&&lr.isFinal){finish(alts);return}
+    clearTimeout(silence);silence=setTimeout(()=>finish(last),isIOS?1300:1800)};
+  r.onerror=e=>{const c=e.error;errCode=c||"";
     if(c==="not-allowed"||c==="service-not-allowed"||c==="audio-capture")toDict(c==="service-not-allowed"&&isIOS?l.recSiri:l.recDenied);
-    else if(c==="network"){const s=st();if(s)s.textContent=l.recNet}
-    else if(c!=="aborted"){const s=st();if(s)s.textContent=isIOS?l.recNothingIOS:l.recNothing}};
-  r.onend=()=>{recActive=false;const b=bt();if(b){b.textContent=l.recStart;b.classList.remove("live")}
-    if(!got&&last){got=true;const s=st();if(s)s.textContent="";doCheck(last)}
-    else if(!got){const s=st();if(s&&!s.textContent)s.textContent=isIOS?l.recNothingIOS:l.recNothing}};
-  try{r.start()}catch(e){toDict(l.recDenied)}
+    else if(c==="network"){const s=st();if(s)s.textContent=l.recNet}};
+  r.onend=()=>{recActive=false;clearTimeout(maxT);const b=bt();if(b){b.textContent=l.recStart;b.classList.remove("live")}
+    if(!got&&last){finish(last);return}
+    if(!got&&errCode!=="network"&&micMode==="sr"){recFails++;const s=st();
+      if(s){s.innerHTML=esc(isIOS?l.recNothingIOS:l.recNothing)+(errCode&&errCode!=="aborted"?` <small>(${esc(errCode)})</small>`:"")+
+        (recFails>=2?`<br><button class="ghost" data-act="usedict" style="padding-left:0">${esc(l.useDict)}</button>`:"")}}};
+  try{r.start()}catch(e){clearTimeout(maxT);toDict(l.recDenied)}
 }
 
 /* ================= self recording ================= */
@@ -560,7 +571,7 @@ function vFeedback(){const l=L();
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
-const APPV="v9";
+const APPV="v10";
 function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
 
 function vToday(){
