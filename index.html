@@ -473,7 +473,9 @@ function record(word,ok){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let micMode=SR?"sr":"dict",micNote="",recog=null,recActive=false;
-function stopRec(){if(recog){try{recog.abort()}catch(e){}}recActive=false;recog=null}
+let recInst=null,recLog=[];
+function logRec(m){recLog.push(m);if(recLog.length>8)recLog.shift()}
+function stopRec(){if(recog&&recActive){try{recog.abort()}catch(e){}}recActive=false;if(!isIOS)recog=null}
 function toDict(note){stopRec();micMode="dict";micNote=note;render(false)}
 let recFails=0;
 function startRec(){
@@ -482,14 +484,15 @@ function startRec(){
   if(hasTTS)speechSynthesis.cancel();
   if(typeof curAudio!=="undefined"&&curAudio){try{curAudio.pause()}catch(e){}}
   if(mrec&&mrec.state==="recording"){try{mrec.stop()}catch(e){}}
-  let r;try{r=new SR()}catch(e){toDict(l.recDenied);return}
+  /* iOS Safari: a fresh recognizer per attempt often hears nothing after the first try. Reuse one. */
+  let r;try{r=isIOS?(recInst||(recInst=new SR())):new SR()}catch(e){toDict(l.recDenied);return}
   /* iOS Safari often ends a non-continuous session before any result arrives.
      There we keep it open and stop it ourselves after a short pause in speech. */
   recog=r;r.lang="de-DE";r.interimResults=true;r.maxAlternatives=5;r.continuous=isIOS;
   let got=false,last=null,errCode="",silence=null;
   const maxT=setTimeout(()=>{try{r.stop()}catch(e){}},isIOS?7000:9000);
   const st=()=>$("recStatus"),bt=()=>$("recBtn");
-  const finish=alts=>{if(got)return;got=true;clearTimeout(silence);clearTimeout(maxT);recFails=0;const s=st();if(s)s.textContent="";doCheck(alts);try{r.stop()}catch(e){}};
+  const finish=alts=>{if(got)return;got=true;logRec("ok");clearTimeout(silence);clearTimeout(maxT);recFails=0;const s=st();if(s)s.textContent="";doCheck(alts);try{r.stop()}catch(e){}};
   r.onstart=()=>{recActive=true;const b=bt();if(b){b.textContent=l.recOn;b.classList.add("live")}const s=st();if(s)s.textContent="";const f=$("fb");if(f)f.hidden=true};
   r.onresult=e=>{
     const rs=Array.from(e.results),head=rs.slice(0,-1).map(x=>x[0].transcript).join(" ").trim(),lr=rs[rs.length-1];
@@ -497,15 +500,17 @@ function startRec(){
     last=alts;const s=st();if(s)s.textContent="… "+alts[0];
     if(!isIOS&&lr.isFinal){finish(alts);return}
     clearTimeout(silence);silence=setTimeout(()=>finish(last),isIOS?1300:1800)};
-  r.onerror=e=>{const c=e.error;errCode=c||"";
+  r.onerror=e=>{const c=e.error;errCode=c||"";logRec("err:"+c);
     if(c==="not-allowed"||c==="service-not-allowed"||c==="audio-capture")toDict(c==="service-not-allowed"&&isIOS?l.recSiri:l.recDenied);
     else if(c==="network"){const s=st();if(s)s.textContent=l.recNet}};
   r.onend=()=>{recActive=false;clearTimeout(maxT);const b=bt();if(b){b.textContent=l.recStart;b.classList.remove("live")}
     if(!got&&last){finish(last);return}
-    if(!got&&errCode!=="network"&&micMode==="sr"){recFails++;const s=st();
+    if(!got&&errCode!=="network"&&micMode==="sr"){recFails++;logRec("leer"+(errCode?"("+errCode+")":""));const s=st();
       if(s){s.innerHTML=esc(isIOS?l.recNothingIOS:l.recNothing)+(errCode&&errCode!=="aborted"?` <small>(${esc(errCode)})</small>`:"")+
         (recFails>=2?`<br><button class="ghost" data-act="usedict" style="padding-left:0">${esc(l.useDict)}</button>`:"")}}};
-  try{r.start()}catch(e){clearTimeout(maxT);toDict(l.recDenied)}
+  try{r.start()}catch(e){clearTimeout(maxT);logRec("start:"+(e&&e.name));
+    if(isIOS&&e&&e.name==="InvalidStateError"){try{r.abort()}catch(_){}recActive=false;const s=st();if(s)s.textContent=l.recHint;return}
+    toDict(l.recDenied)}
 }
 
 /* ================= self recording ================= */
@@ -536,7 +541,7 @@ const F_NAME="entry.477745371",F_TEXT="entry.1994519768",F_INFO="entry.175975155
 let fbStars=0,fbState="",fbFrom="today";
 function device(){const u=navigator.userAgent;return /iPhone|iPad|iPod/.test(u)?"iPhone":/Android/.test(u)?"Android":/Mac/.test(u)?"Mac":/Windows/.test(u)?"Windows":"Andere"}
 function fbInfo(){const done=SETS.filter((s,i)=>isPassed(i)).length;
-  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Diagnose: ${diag||"-"} | Stimme-Modus: ${S.voiceMode}/${useOnline()?"online":"device"} | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
+  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Diagnose: ${diag||"-"} | Erkennung: ${recLog.join(",")||"-"} | Stimme-Modus: ${S.voiceMode}/${useOnline()?"online":"device"} | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
 async function sendFeedback(){
   const l=L(),text=($("fbTxt").value||"").trim(),name=($("fbNm").value||"").trim();
   if(!text&&!fbStars){fbState="empty";paintFb();return}
@@ -571,7 +576,7 @@ function vFeedback(){const l=L();
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
-const APPV="v10";
+const APPV="v11";
 function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
 
 function vToday(){
