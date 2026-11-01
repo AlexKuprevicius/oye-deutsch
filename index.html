@@ -277,7 +277,7 @@ const T={
   xSit:"Alltagssituationen",xFun:"Zum Spaß",own:"Eigene Wörter",ownSub:"Deine eigene Übungsliste",nWords:n=>`${n} Sätze`,nOwn:n=>`${n} Wörter`,
   back:"← Zurück",practice:"Üben",test:"Test",startExam:"Prüfung starten",startTest:"Test starten",examInfo:`Ab ${PASS} % bestanden, dann geht das nächste Level auf.`,testInfo:"Teste dich ohne Druck. Dein bestes Ergebnis wird gespeichert.",best:"Bestes Ergebnis",
   listen:"Anhören",slow:"Langsam",yourTurn:"Jetzt du",
-  recStart:"🎤 Sprechen",recOn:"● Ich höre zu … (tippen zum Stoppen)",recHint:"Tippe auf Sprechen und sag es laut.",recNothing:"Ich habe nichts gehört. Tippe nochmal und sprich etwas lauter.",recDenied:"Hier ist kein Mikrofon erlaubt. Darum jetzt per Tastatur-Diktat:",recSiri:"Auf dem iPhone muss das Diktat an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Bis dahin per Tastatur-Diktat:",recNet:"Die Spracherkennung braucht Internet.",useDict:"Tastatur-Diktat benutzen",useRec:"Mikrofon-Knopf benutzen",
+  recStart:"🎤 Sprechen",recOn:"● Ich höre zu … (tippen zum Stoppen)",recHint:"Tippe auf Sprechen und sag es laut.",recNothing:"Ich habe nichts gehört. Tippe nochmal und sprich etwas lauter.",recNothingIOS:"Ich habe nichts gehört. iPhone: Diktierfunktion an? Mikrofon für Safari erlaubt? Siehe Einstellungen → So funktioniert das Sprechen.",recDenied:"Hier ist kein Mikrofon erlaubt. Darum jetzt per Tastatur-Diktat:",recSiri:"Auf dem iPhone muss das Diktat an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Bis dahin per Tastatur-Diktat:",recNet:"Die Spracherkennung braucht Internet.",useDict:"Tastatur-Diktat benutzen",useRec:"Mikrofon-Knopf benutzen",
   kbOpen:"⌨️ Tastatur öffnen",steps:["Tippe auf „Tastatur öffnen“.","Tippe auf das 🎤 in der Tastatur (deutsche Tastatur).","Sag es und warte kurz. Wird automatisch geprüft."],ph:"Hier erscheint, was verstanden wurde",check:"Prüfen",again:"Nochmal",
   self:"Mich aufnehmen",selfStop:"● Aufnahme … (tippen zum Stoppen)",selfMe:"▶ Ich",selfOrig:"▶ Original",selfHint:"Nimm dich auf und vergleiche mit dem Original.",selfDenied:"Aufnahme nicht möglich: Mikrofon nicht erlaubt.",
   prev:"← Zurück",next:"Weiter →",native:"Muttersprachler auf Wiktionary ↗",pairs:"Paare: hör den Unterschied",words:"Wörter",quizThis:"Hör-Quiz zu diesem Level",
@@ -293,13 +293,14 @@ const T={
   lang:"Sprache der App",rate:"Sprechtempo",testMode:"Testmodus: alle Level freischalten",testSub:"Zum Ausprobieren. Prüfungen bleiben gleich.",on:"An",off:"Aus",
   reset:"Fortschritt zurücksetzen",resetQ:"Wirklich alle Ergebnisse, Zeiten und eigenen Wörter löschen?",yes:"Ja, löschen",no:"Abbrechen",resetDone:"Alles zurückgesetzt.",
   help:"So funktioniert das Sprechen",helpMic:"Auf „Sprechen“ tippen, beim ersten Mal das Mikrofon erlauben und das Wort sagen. Die App prüft automatisch.",iph:"iPhone",and:"Android",
-  helpI:["Link in Safari öffnen.","Die Diktierfunktion muss an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Ohne sie geht die Spracherkennung nicht."],
+  helpI:["Link in Safari öffnen.","Die Diktierfunktion muss an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Ohne sie geht die Spracherkennung nicht.","Mikrofon für Safari erlauben: Einstellungen → Apps → Safari → Mikrofon → „Fragen“ oder „Erlauben“."],
   helpA:["Link in Chrome öffnen.","Beim ersten Tippen auf „Sprechen“ das Mikrofon erlauben."],
   helpN:"Mikrofon aus Versehen blockiert? Oben neben der Adresse auf das Schloss bzw. Einstellungs-Symbol tippen und das Mikrofon erlauben. Kein Ton? Stummschalter aus, Lautstärke hoch.",
   noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Kein Ton? Stummschalter an der Seite aus, Lautstärke hoch. Mehr Hilfe unter Einstellungen → Ton testen.",
   add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
   hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"],
   vmT:"Stimme",vmAuto:"Automatisch",vmOnline:"Online",vmDevice:"Handy-Stimme",vmSub:"„Automatisch“ nimmt auf dem iPhone die Online-Stimme (braucht Internet), sonst die Stimme des Handys. Kein Ton? Probier die andere Einstellung.",
+  muteT:"🔇 Kein Ton?",muteTxt:"Auf dem iPhone bleibt die Stimme stumm, solange der Stummschalter an der Seite an ist (Orange sichtbar). Schalte ihn aus und mach den Ton laut.",muteBtn:"Verstanden",muteTest:"🔊 Jetzt testen",
   sndT:"Ton testen",sndSub:"Tippe auf den Knopf. Du solltest „Hallo, ich bin Oye Deutsch“ hören.",sndBtn:"🔊 Ton testen",sndOk:"Stimme gefunden",sndNo:"Keine deutsche Stimme gefunden",
   sndHelp:["Lautstärke-Taste hochdrücken, während die App offen ist.","iPhone: Stummschalter an der Seite ausschalten (kein Orange sichtbar).","Den Link in Safari öffnen, nicht in WhatsApp oder Instagram.","iPhone: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch: eine Stimme laden."],
   fbT:"Feedback",fbCard:"Wie gefällt dir die App?",fbCardSub:"Lob, Fehler, Wünsche: alles hilft, die App besser zu machen.",fbGo:"Feedback geben",
@@ -314,7 +315,7 @@ const T={
   xSit:"Situaciones del día a día",xFun:"Por diversión",own:"Mis palabras",ownSub:"Tu propia lista",nWords:n=>`${n} frases`,nOwn:n=>`${n} palabras`,
   back:"← Volver",practice:"Practicar",test:"Test",startExam:"Empezar examen",startTest:"Empezar test",examInfo:`Con un ${PASS} % apruebas y se abre el siguiente nivel.`,testInfo:"Ponte a prueba sin presión. Se guarda tu mejor resultado.",best:"Mejor resultado",
   listen:"Escuchar",slow:"Lento",yourTurn:"Ahora tú",
-  recStart:"🎤 Hablar",recOn:"● Te escucho … (toca para parar)",recHint:"Pulsa Hablar y dilo en voz alta.",recNothing:"No he oído nada. Pulsa otra vez y habla un poco más alto.",recDenied:"Aquí no se permite el micrófono. Por eso, con el dictado del teclado:",recSiri:"En el iPhone el dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Mientras tanto, con el dictado del teclado:",recNet:"El reconocimiento de voz necesita internet.",useDict:"Usar el dictado del teclado",useRec:"Usar el botón de micrófono",
+  recStart:"🎤 Hablar",recOn:"● Te escucho … (toca para parar)",recHint:"Pulsa Hablar y dilo en voz alta.",recNothing:"No he oído nada. Pulsa otra vez y habla un poco más alto.",recNothingIOS:"No he oído nada. iPhone: ¿dictado activado? ¿micrófono permitido para Safari? Mira Ajustes → Cómo funciona hablar.",recDenied:"Aquí no se permite el micrófono. Por eso, con el dictado del teclado:",recSiri:"En el iPhone el dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Mientras tanto, con el dictado del teclado:",recNet:"El reconocimiento de voz necesita internet.",useDict:"Usar el dictado del teclado",useRec:"Usar el botón de micrófono",
   kbOpen:"⌨️ Abrir teclado",steps:["Pulsa «Abrir teclado».","Toca el 🎤 del teclado (teclado alemán).","Dilo y espera un momento. Se comprueba solo."],ph:"Aquí aparece lo que se entendió",check:"Comprobar",again:"Otra vez",
   self:"Grabarme",selfStop:"● Grabando … (toca para parar)",selfMe:"▶ Yo",selfOrig:"▶ Original",selfHint:"Grábate y compárate con el original.",selfDenied:"No se puede grabar: micrófono no permitido.",
   prev:"← Anterior",next:"Siguiente →",native:"Nativo en Wiktionary ↗",pairs:"Parejas: escucha la diferencia",words:"Palabras",quizThis:"Quiz de oído de este nivel",
@@ -330,13 +331,14 @@ const T={
   lang:"Idioma de la app",rate:"Velocidad de la voz",testMode:"Modo prueba: desbloquear todos los niveles",testSub:"Para probar la app. Los exámenes no cambian.",on:"Sí",off:"No",
   reset:"Borrar progreso",resetQ:"¿Seguro que quieres borrar resultados, tiempos y tus palabras?",yes:"Sí, borrar",no:"Cancelar",resetDone:"Todo borrado.",
   help:"Cómo funciona hablar",helpMic:"Pulsa «Hablar», la primera vez permite el micrófono y di la palabra. La app lo comprueba sola.",iph:"iPhone",and:"Android",
-  helpI:["Abre el enlace en Safari.","El dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Sin él no funciona el reconocimiento de voz."],
+  helpI:["Abre el enlace en Safari.","El dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Sin él no funciona el reconocimiento de voz.","Permite el micrófono a Safari: Ajustes → Apps → Safari → Micrófono → «Preguntar» o «Permitir»."],
   helpA:["Abre el enlace en Chrome.","La primera vez que pulses «Hablar», permite el micrófono."],
   helpN:"¿Bloqueaste el micrófono sin querer? Toca el candado o el icono de ajustes junto a la dirección y permite el micrófono. ¿No suena? Quita el modo silencio y sube el volumen.",
   noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"¿No suena? Quita el modo silencio del lateral y sube el volumen. Más ayuda en Ajustes → Probar sonido.",
   add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
   hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"],
   vmT:"Voz",vmAuto:"Automática",vmOnline:"Online",vmDevice:"Voz del móvil",vmSub:"«Automática» usa la voz online en el iPhone (necesita internet) y en otros la voz del móvil. ¿No suena? Prueba la otra opción.",
+  muteT:"🔇 ¿No suena?",muteTxt:"En el iPhone la voz no suena mientras el interruptor de silencio del lateral esté activado (se ve naranja). Desactívalo y sube el volumen.",muteBtn:"Entendido",muteTest:"🔊 Probar ahora",
   sndT:"Probar el sonido",sndSub:"Pulsa el botón. Deberías oír «Hallo, ich bin Oye Deutsch».",sndBtn:"🔊 Probar sonido",sndOk:"Voz encontrada",sndNo:"No se encontró voz alemana",
   sndHelp:["Sube el volumen con el botón lateral mientras la app está abierta.","iPhone: desactiva el interruptor de silencio del lateral (que no se vea naranja).","Abre el enlace en Safari, no dentro de WhatsApp o Instagram.","iPhone: Ajustes → Accesibilidad → Contenido leído → Voces → Alemán: descarga una voz."],
   fbT:"Opinión",fbCard:"¿Qué te parece la app?",fbCardSub:"Elogios, errores, deseos: todo ayuda a mejorarla.",fbGo:"Dar mi opinión",
@@ -347,7 +349,7 @@ const T={
 /* ================= state ================= */
 const KEY="oye-deutsch";
 function fresh(){return{lang:(navigator.language||"").toLowerCase().startsWith("es")?"es":"de",rate:0.9,test:false,best:{},words:{},srs:{},
-  stats:{tries:0,ok:0,listens:0,secs:0,quiz:0,quizOk:0},days:[],custom:[],dailyDone:"",voiceMode:"auto"}}
+  stats:{tries:0,ok:0,listens:0,secs:0,quiz:0,quizOk:0},days:[],custom:[],dailyDone:"",voiceMode:"auto",muteTip:false}}
 let S=fresh();
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S=Object.assign(fresh(),o);S.stats=Object.assign(fresh().stats,o.stats||{})}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -488,10 +490,10 @@ function startRec(){
   r.onerror=e=>{const c=e.error;
     if(c==="not-allowed"||c==="service-not-allowed"||c==="audio-capture")toDict(c==="service-not-allowed"&&isIOS?l.recSiri:l.recDenied);
     else if(c==="network"){const s=st();if(s)s.textContent=l.recNet}
-    else if(c!=="aborted"){const s=st();if(s)s.textContent=l.recNothing}};
+    else if(c!=="aborted"){const s=st();if(s)s.textContent=isIOS?l.recNothingIOS:l.recNothing}};
   r.onend=()=>{recActive=false;const b=bt();if(b){b.textContent=l.recStart;b.classList.remove("live")}
     if(!got&&last){got=true;const s=st();if(s)s.textContent="";doCheck(last)}
-    else if(!got){const s=st();if(s&&!s.textContent)s.textContent=l.recNothing}};
+    else if(!got){const s=st();if(s&&!s.textContent)s.textContent=isIOS?l.recNothingIOS:l.recNothing}};
   try{r.start()}catch(e){toDict(l.recDenied)}
 }
 
@@ -558,7 +560,7 @@ function vFeedback(){const l=L();
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
-const APPV="v8";
+const APPV="v9";
 function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
 
 function vToday(){
@@ -566,7 +568,9 @@ function vToday(){
   const week=[];const d=new Date();const dow=(d.getDay()+6)%7;const set=new Set(S.days);
   for(let k=0;k<7;k++){const x=new Date(d);x.setDate(d.getDate()-dow+k);week.push(`<span class="${set.has(dayKey(x))?"y":""}"><i></i>${l.days[k]}</span>`)}
   const done=S.dailyDone===today();
-  return `${topBar()}
+  const muteTip=isIOSdev&&!S.muteTip?`<section class="card" style="background:var(--gold-soft)"><h3>${esc(l.muteT)}</h3><p>${esc(l.muteTxt)}</p>
+    <div class="row"><button class="gold" data-say="Hallo, ich bin Oye Deutsch.">${esc(l.muteTest)}</button>${wave}<button data-act="mutetip">${esc(l.muteBtn)}</button></div></section>`:"";
+  return `${topBar()}${muteTip}
   <section class="stage">
     <div class="row between"><span class="eyebrow">${esc(l.daily)}</span>${done?`<span class="eyebrow" style="color:var(--gold)">${esc(l.dailyDone)}</span>`:""}</div>
     <p class="word">${marked(dw.w)}</p>
@@ -869,6 +873,7 @@ document.addEventListener("click",e=>{
    case"fbstar":fbStars=+b.dataset.n;if(fbState==="empty"||fbState==="sent")fbState="";paintFb();break;
    case"fbsend":sendFeedback();break;
    case"test":S.test=!S.test;save();render(false);break;
+   case"mutetip":S.muteTip=true;save();render(false);break;
    case"vmode":S.voiceMode=b.dataset.v;save();render(false);speak("Hallo, ich bin Oye Deutsch.",false);break;
    case"reset":confirmReset=true;render(false);break;
    case"resetno":confirmReset=false;render(false);break;
