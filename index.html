@@ -299,6 +299,7 @@ const T={
   noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Kein Ton? Stummschalter an der Seite aus, Lautstärke hoch. Mehr Hilfe unter Einstellungen → Ton testen.",
   add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
   hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"],
+  vmT:"Stimme",vmAuto:"Automatisch",vmOnline:"Online",vmDevice:"Handy-Stimme",vmSub:"„Automatisch“ nimmt auf dem iPhone die Online-Stimme (braucht Internet), sonst die Stimme des Handys. Kein Ton? Probier die andere Einstellung.",
   sndT:"Ton testen",sndSub:"Tippe auf den Knopf. Du solltest „Hallo, ich bin Oye Deutsch“ hören.",sndBtn:"🔊 Ton testen",sndOk:"Stimme gefunden",sndNo:"Keine deutsche Stimme gefunden",
   sndHelp:["Lautstärke-Taste hochdrücken, während die App offen ist.","iPhone: Stummschalter an der Seite ausschalten (kein Orange sichtbar).","Den Link in Safari öffnen, nicht in WhatsApp oder Instagram.","iPhone: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch: eine Stimme laden."],
   fbT:"Feedback",fbCard:"Wie gefällt dir die App?",fbCardSub:"Lob, Fehler, Wünsche: alles hilft, die App besser zu machen.",fbGo:"Feedback geben",
@@ -335,6 +336,7 @@ const T={
   noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"¿No suena? Quita el modo silencio del lateral y sube el volumen. Más ayuda en Ajustes → Probar sonido.",
   add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
   hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"],
+  vmT:"Voz",vmAuto:"Automática",vmOnline:"Online",vmDevice:"Voz del móvil",vmSub:"«Automática» usa la voz online en el iPhone (necesita internet) y en otros la voz del móvil. ¿No suena? Prueba la otra opción.",
   sndT:"Probar el sonido",sndSub:"Pulsa el botón. Deberías oír «Hallo, ich bin Oye Deutsch».",sndBtn:"🔊 Probar sonido",sndOk:"Voz encontrada",sndNo:"No se encontró voz alemana",
   sndHelp:["Sube el volumen con el botón lateral mientras la app está abierta.","iPhone: desactiva el interruptor de silencio del lateral (que no se vea naranja).","Abre el enlace en Safari, no dentro de WhatsApp o Instagram.","iPhone: Ajustes → Accesibilidad → Contenido leído → Voces → Alemán: descarga una voz."],
   fbT:"Opinión",fbCard:"¿Qué te parece la app?",fbCardSub:"Elogios, errores, deseos: todo ayuda a mejorarla.",fbGo:"Dar mi opinión",
@@ -345,7 +347,7 @@ const T={
 /* ================= state ================= */
 const KEY="oye-deutsch";
 function fresh(){return{lang:(navigator.language||"").toLowerCase().startsWith("es")?"es":"de",rate:0.9,test:false,best:{},words:{},srs:{},
-  stats:{tries:0,ok:0,listens:0,secs:0,quiz:0,quizOk:0},days:[],custom:[],dailyDone:""}}
+  stats:{tries:0,ok:0,listens:0,secs:0,quiz:0,quizOk:0},days:[],custom:[],dailyDone:"",voiceMode:"auto"}}
 let S=fresh();
 try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);S=Object.assign(fresh(),o);S.stats=Object.assign(fresh().stats,o.stats||{})}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -402,8 +404,25 @@ function unlockAudio(){if(audioUnlocked)return;audioUnlocked=true;
 document.addEventListener("pointerdown",unlockAudio,true);document.addEventListener("touchend",unlockAudio,true);
 function ttsWarn(on){const b=$("ttsWarn");if(b)b.hidden=!on}
 function waveOn(on){document.querySelectorAll(".wave").forEach(w=>w.classList.toggle("on",on))}
+/* Online voice: a plain <audio> element is the most reliable way to make sound on iPhones
+   (works with the silent switch on and inside in-app browsers). */
+const isIOSdev=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+function useOnline(){return S.voiceMode==="online"||(S.voiceMode==="auto"&&(isIOSdev||!hasTTS))}
+let curAudio=null;
+function speakOnline(text,slow){
+  if(curAudio){try{curAudio.pause()}catch(e){}}
+  const url="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&ttsspeed="+(slow?"0.3":"1")+"&q="+encodeURIComponent(text.slice(0,190));
+  const a=new Audio(url);a.setAttribute("playsinline","");a.preload="auto";curAudio=a;
+  a.onplaying=()=>{ttsWarn(false);waveOn(true)};a.onended=()=>waveOn(false);a.onpause=()=>waveOn(false);
+  a.onerror=()=>{waveOn(false);if(hasTTS&&S.voiceMode!=="online")speakDevice(text,slow);else ttsWarn(true)};
+  const p=a.play();if(p&&p.catch)p.catch(err=>{if(err&&err.name==="NotAllowedError")ttsWarn(true)});
+}
 function speak(text,slow){
   S.stats.listens++;markDay();save();
+  if(useOnline()){speakOnline(text,slow);return}
+  speakDevice(text,slow);
+}
+function speakDevice(text,slow){
   if(!hasTTS){ttsWarn(true);return}
   if(!voice)pickVoice();
   const go=()=>{let started=false;
@@ -502,7 +521,7 @@ const F_NAME="entry.477745371",F_TEXT="entry.1994519768",F_INFO="entry.175975155
 let fbStars=0,fbState="",fbFrom="today";
 function device(){const u=navigator.userAgent;return /iPhone|iPad|iPod/.test(u)?"iPhone":/Android/.test(u)?"Android":/Mac/.test(u)?"Mac":/Windows/.test(u)?"Windows":"Andere"}
 function fbInfo(){const done=SETS.filter((s,i)=>isPassed(i)).length;
-  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
+  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Stimme-Modus: ${S.voiceMode}/${useOnline()?"online":"device"} | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
 async function sendFeedback(){
   const l=L(),text=($("fbTxt").value||"").trim(),name=($("fbNm").value||"").trim();
   if(!text&&!fbStars){fbState="empty";paintFb();return}
@@ -722,7 +741,10 @@ function vSettings(){
   return `${topBar()}<header><h2>${esc(l.tSet)}</h2></header>
   <section class="card"><h3>${esc(l.sndT)}</h3><p class="muted">${esc(l.sndSub)}</p>
    <div class="row"><button class="gold" data-say="Hallo, ich bin Oye Deutsch.">${esc(l.sndBtn)}</button>${wave}</div>
-   <p class="muted" style="font-size:.85rem">${voice?"✓ "+esc(l.sndOk)+": "+esc(voice.name):"⚠️ "+esc(l.sndNo)}</p>
+   <span class="eyebrow">${esc(l.vmT)}</span>
+   <div class="seg">${[["auto",l.vmAuto],["online",l.vmOnline],["device",l.vmDevice]].map(([k,t])=>`<button data-act="vmode" data-v="${k}" aria-pressed="${S.voiceMode===k}">${esc(t)}</button>`).join("")}</div>
+   <p class="muted" style="font-size:.85rem">${esc(l.vmSub)}</p>
+   <p class="muted" style="font-size:.85rem">${useOnline()?"🌐 "+esc(l.vmOnline):voice?"✓ "+esc(l.sndOk)+": "+esc(voice.name):"⚠️ "+esc(l.sndNo)}</p>
    <ol style="margin:0;padding-left:20px;font-size:.92rem">${l.sndHelp.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
   ${ttsBanner()}
   <section class="card"><span class="eyebrow">${esc(l.lang)}</span>
@@ -799,7 +821,7 @@ function startQuiz(setOnly){
   for(let k=0;k<10;k++){const p=pool[k%pool.length];items.push({pair:Math.random()<.5?[p[0],p[1]]:[p[1],p[0]],target:p[Math.random()<.5?0:1],ans:null})}
   quiz={items,q:0,back:view==="set"?(cur.kind==="level"?"levels":"extras"):(view==="today"||view==="quizres"&&quiz&&quiz.back==="today")?"today":"extras",
     label:setOnly?tx(getSet().title):"",setId:setOnly?getSet().id:null};
-  view="quiz";render(true);setTimeout(()=>speak(items[0].target,false),60)}
+  speak(items[0].target,false);view="quiz";render(true)}
 function addOwn(){const oi=$("ownIn");const v=(oi.value||"").trim().replace(/[\[\]<>]/g,"");if(!v)return;
   if(!S.custom.includes(v))S.custom.push(v);save();wi=S.custom.indexOf(v);render(false);setTimeout(()=>{const n=$("ownIn");if(n)n.focus()},0)}
 function openSet(kind,i){cur={kind,i};wi=0;view="set";render(true)}
@@ -845,6 +867,7 @@ document.addEventListener("click",e=>{
    case"fbstar":fbStars=+b.dataset.n;if(fbState==="empty"||fbState==="sent")fbState="";paintFb();break;
    case"fbsend":sendFeedback();break;
    case"test":S.test=!S.test;save();render(false);break;
+   case"vmode":S.voiceMode=b.dataset.v;save();render(false);speak("Hallo, ich bin Oye Deutsch.",false);break;
    case"reset":confirmReset=true;render(false);break;
    case"resetno":confirmReset=false;render(false);break;
    case"resetyes":{const lang=S.lang;S=fresh();S.lang=lang;save();confirmReset=false;flash=l.resetDone;render(false);break}
