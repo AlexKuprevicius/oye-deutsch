@@ -296,9 +296,11 @@ const T={
   helpI:["Link in Safari öffnen.","Die Diktierfunktion muss an sein: Einstellungen → Allgemein → Tastatur → Diktierfunktion. Ohne sie geht die Spracherkennung nicht."],
   helpA:["Link in Chrome öffnen.","Beim ersten Tippen auf „Sprechen“ das Mikrofon erlauben."],
   helpN:"Mikrofon aus Versehen blockiert? Oben neben der Adresse auf das Schloss bzw. Einstellungs-Symbol tippen und das Mikrofon erlauben. Kein Ton? Stummschalter aus, Lautstärke hoch.",
-  noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Ton konnte nicht abgespielt werden. Stummschaltung aus? Sonst den Link direkt in Safari oder Chrome öffnen.",
+  noTts:"Die Sprachausgabe geht hier nicht. Öffne den Link direkt im Browser (iPhone: Safari, Android: Chrome) und schalte den Ton ein.",ttsFail:"Kein Ton? Stummschalter an der Seite aus, Lautstärke hoch. Mehr Hilfe unter Einstellungen → Ton testen.",
   add:"Hinzufügen",addPh:"z. B. Eichhörnchen",ownNone:"Noch keine eigenen Wörter. Füge oben eins hinzu.",del:"Löschen",
   hm:(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,days:["Mo","Di","Mi","Do","Fr","Sa","So"],
+  sndT:"Ton testen",sndSub:"Tippe auf den Knopf. Du solltest „Hallo, ich bin Oye Deutsch“ hören.",sndBtn:"🔊 Ton testen",sndOk:"Stimme gefunden",sndNo:"Keine deutsche Stimme gefunden",
+  sndHelp:["Lautstärke-Taste hochdrücken, während die App offen ist.","iPhone: Stummschalter an der Seite ausschalten (kein Orange sichtbar).","Den Link in Safari öffnen, nicht in WhatsApp oder Instagram.","iPhone: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch: eine Stimme laden."],
   fbT:"Feedback",fbCard:"Wie gefällt dir die App?",fbCardSub:"Lob, Fehler, Wünsche: alles hilft, die App besser zu machen.",fbGo:"Feedback geben",
   fbStars:"Deine Bewertung",fbText:"Was können wir besser machen?",fbTextPh:"z. B. Ein Wort wird immer falsch erkannt, oder: Ich wünsche mir mehr Sätze zum Thema Arbeit …",fbName:"Dein Name (freiwillig)",
   fbSend:"Absenden",fbSending:"Wird gesendet …",fbThanks:"Danke! Dein Feedback ist angekommen. 💛",fbEmpty:"Schreib bitte kurz etwas oder vergib Sterne.",fbFail:"Senden hat hier nicht geklappt. Öffne das Formular direkt:",fbOpen:"Formular öffnen ↗"},
@@ -330,9 +332,11 @@ const T={
   helpI:["Abre el enlace en Safari.","El dictado tiene que estar activado: Ajustes → General → Teclado → Dictado. Sin él no funciona el reconocimiento de voz."],
   helpA:["Abre el enlace en Chrome.","La primera vez que pulses «Hablar», permite el micrófono."],
   helpN:"¿Bloqueaste el micrófono sin querer? Toca el candado o el icono de ajustes junto a la dirección y permite el micrófono. ¿No suena? Quita el modo silencio y sube el volumen.",
-  noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"No se pudo reproducir. ¿Modo silencio? Si no, abre el enlace directamente en Safari o Chrome.",
+  noTts:"La voz no funciona aquí. Abre el enlace directamente en el navegador (iPhone: Safari, Android: Chrome) y activa el sonido.",ttsFail:"¿No suena? Quita el modo silencio del lateral y sube el volumen. Más ayuda en Ajustes → Probar sonido.",
   add:"Añadir",addPh:"p. ej. Eichhörnchen",ownNone:"Todavía no hay palabras. Añade una arriba.",del:"Borrar",
   hm:(h,m)=>h?`${h} h ${m} min`:`${m} min`,days:["L","M","X","J","V","S","D"],
+  sndT:"Probar el sonido",sndSub:"Pulsa el botón. Deberías oír «Hallo, ich bin Oye Deutsch».",sndBtn:"🔊 Probar sonido",sndOk:"Voz encontrada",sndNo:"No se encontró voz alemana",
+  sndHelp:["Sube el volumen con el botón lateral mientras la app está abierta.","iPhone: desactiva el interruptor de silencio del lateral (que no se vea naranja).","Abre el enlace en Safari, no dentro de WhatsApp o Instagram.","iPhone: Ajustes → Accesibilidad → Contenido leído → Voces → Alemán: descarga una voz."],
   fbT:"Opinión",fbCard:"¿Qué te parece la app?",fbCardSub:"Elogios, errores, deseos: todo ayuda a mejorarla.",fbGo:"Dar mi opinión",
   fbStars:"Tu valoración",fbText:"¿Qué podemos mejorar?",fbTextPh:"p. ej. Una palabra nunca se reconoce bien, o: me gustaría más frases sobre el trabajo …",fbName:"Tu nombre (opcional)",
   fbSend:"Enviar",fbSending:"Enviando …",fbThanks:"¡Gracias! Tu opinión ha llegado. 💛",fbEmpty:"Escribe algo o pon estrellas, por favor.",fbFail:"Aquí no se pudo enviar. Abre el formulario directamente:",fbOpen:"Abrir formulario ↗"}
@@ -388,6 +392,14 @@ let voice=null;
 function pickVoice(){if(!hasTTS)return;const vs=speechSynthesis.getVoices().filter(v=>/^de([-_]|$)/i.test(v.lang));
   voice=vs.find(v=>/de[-_]DE/i.test(v.lang)&&v.localService)||vs.find(v=>/de[-_]DE/i.test(v.lang))||vs[0]||null}
 if(hasTTS){pickVoice();try{speechSynthesis.addEventListener("voiceschanged",pickVoice)}catch(e){speechSynthesis.onvoiceschanged=pickVoice}}
+/* iOS mutes web speech while the ring/silent switch is on. Playing an <audio> element once
+   moves the page into the media audio session, which ignores the switch. */
+const SILENT="data:audio/wav;base64,UklGRvQHAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YdAHAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
+let audioUnlocked=false;
+function unlockAudio(){if(audioUnlocked)return;audioUnlocked=true;
+  try{const a=new Audio(SILENT);a.setAttribute("playsinline","");a.volume=0.01;a.play().catch(()=>{audioUnlocked=false})}catch(e){audioUnlocked=false}
+  if(hasTTS){try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="de-DE";speechSynthesis.speak(u)}catch(e){}}}
+document.addEventListener("pointerdown",unlockAudio,true);document.addEventListener("touchend",unlockAudio,true);
 function ttsWarn(on){const b=$("ttsWarn");if(b)b.hidden=!on}
 function waveOn(on){document.querySelectorAll(".wave").forEach(w=>w.classList.toggle("on",on))}
 function speak(text,slow){
@@ -490,7 +502,7 @@ const F_NAME="entry.477745371",F_TEXT="entry.1994519768",F_INFO="entry.175975155
 let fbStars=0,fbState="",fbFrom="today";
 function device(){const u=navigator.userAgent;return /iPhone|iPad|iPod/.test(u)?"iPhone":/Android/.test(u)?"Android":/Mac/.test(u)?"Mac":/Windows/.test(u)?"Windows":"Andere"}
 function fbInfo(){const done=SETS.filter((s,i)=>isPassed(i)).length;
-  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Mikro: ${micMode} | Von: ${fbFrom}`}
+  return `Sterne: ${fbStars||"-"} | Sprache: ${S.lang} | Gerät: ${device()} | Level bestanden: ${done}/${SETS.length} | Serie: ${streak()} | Lernzeit: ${Math.round(S.stats.secs/60)} Min | Mikro: ${micMode} | Stimme: ${voice?voice.name:"keine"} (${hasTTS?speechSynthesis.getVoices().length:0}) | Von: ${fbFrom}`}
 async function sendFeedback(){
   const l=L(),text=($("fbTxt").value||"").trim(),name=($("fbNm").value||"").trim();
   if(!text&&!fbStars){fbState="empty";paintFb();return}
@@ -708,6 +720,11 @@ function vStats(){
 function vSettings(){
   const l=L();
   return `${topBar()}<header><h2>${esc(l.tSet)}</h2></header>
+  <section class="card"><h3>${esc(l.sndT)}</h3><p class="muted">${esc(l.sndSub)}</p>
+   <div class="row"><button class="gold" data-say="Hallo, ich bin Oye Deutsch.">${esc(l.sndBtn)}</button>${wave}</div>
+   <p class="muted" style="font-size:.85rem">${voice?"✓ "+esc(l.sndOk)+": "+esc(voice.name):"⚠️ "+esc(l.sndNo)}</p>
+   <ol style="margin:0;padding-left:20px;font-size:.92rem">${l.sndHelp.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
+  ${ttsBanner()}
   <section class="card"><span class="eyebrow">${esc(l.lang)}</span>
    <div class="seg"><button data-act="lang" data-v="de" aria-pressed="${S.lang==="de"}">🇩🇪 Deutsch</button><button data-act="lang" data-v="es" aria-pressed="${S.lang==="es"}">🇪🇸 Español</button></div></section>
   <section class="card"><label class="eyebrow" for="rate">${esc(l.rate)}: <span id="rateV">${S.rate.toFixed(2)}×</span></label>
