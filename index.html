@@ -407,7 +407,7 @@ function waveOn(on){document.querySelectorAll(".wave").forEach(w=>w.classList.to
 /* Online voice: a plain <audio> element is the most reliable way to make sound on iPhones
    (works with the silent switch on and inside in-app browsers). */
 const isIOSdev=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-function useOnline(){return S.voiceMode==="online"||(S.voiceMode==="auto"&&(isIOSdev||!hasTTS))}
+function useOnline(){return false} /* online voice disabled: the endpoint does not answer */
 let curAudio=null,diag="";
 function setDiag(m){diag=m;const d=document.getElementById("diag");if(d)d.textContent=m}
 function speakOnline(text,slow){
@@ -558,7 +558,7 @@ function vFeedback(){const l=L();
 /* ================= views ================= */
 const app=$("app");
 const ttsBanner=()=>{const l=L();return `<div class="banner" id="ttsWarn" ${hasTTS?"hidden":""}>${esc(hasTTS?l.ttsFail:l.noTts)}</div>`};
-const APPV="v7";
+const APPV="v8";
 function topBar(){return `<div class="top"><div class="brand"><span class="logo">Ö</span>Oye <span>Deutsch</span></div><span class="pill" title="${esc(L().sStreak)}">🔥 ${streak()}</span></div>`}
 
 function vToday(){
@@ -744,9 +744,6 @@ function vSettings(){
   return `${topBar()}<header><h2>${esc(l.tSet)}</h2></header>
   <section class="card"><h3>${esc(l.sndT)}</h3><p class="muted">${esc(l.sndSub)}</p>
    <div class="row"><button class="gold" data-say="Hallo, ich bin Oye Deutsch.">${esc(l.sndBtn)}</button>${wave}</div>
-   <span class="eyebrow">${esc(l.vmT)}</span>
-   <div class="seg">${[["auto",l.vmAuto],["online",l.vmOnline],["device",l.vmDevice]].map(([k,t])=>`<button data-act="vmode" data-v="${k}" aria-pressed="${S.voiceMode===k}">${esc(t)}</button>`).join("")}</div>
-   <p class="muted" style="font-size:.85rem">${esc(l.vmSub)}</p>
    <p class="muted" style="font-size:.8rem">App ${APPV} · ${isIOSdev?"iPhone":"kein iPhone"} · ${hasTTS?speechSynthesis.getVoices().length+" Handy-Stimmen":"keine Handy-Stimme"}</p>
    <p class="muted" style="font-size:.85rem;font-family:ui-monospace,monospace" id="diag">${esc(diag||"–")}</p>
    <p class="muted" style="font-size:.85rem">${useOnline()?"🌐 "+esc(l.vmOnline):voice?"✓ "+esc(l.sndOk)+": "+esc(voice.name):"⚠️ "+esc(l.sndNo)}</p>
